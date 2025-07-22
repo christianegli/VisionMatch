@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glasses Finder - OptiQa</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Define initMap globally before Google Maps loads
+        window.initMap = function() {
+            console.log("Google Maps API loaded successfully");
+        };
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwPLk8BhFMmAMWSAlKC3DOgPMNqL6BJXA&callback=initMap&libraries=places"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+                sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        @keyframes zoom-once {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        .pulse-once {
+            animation: zoom-once 0.8s ease-in-out 1;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 3px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            appearance: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+        
+        // Complete SVG icon components
+        const ChevronRight = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'm9 18 6-6-6-6' }));
+        const ChevronLeft = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'm15 18-6-6 6-6' }));
+        const Eye = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' }), React.createElement('circle', { cx: 12, cy: 12, r: 3 }));
+        const Glasses = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('circle', { cx: 6, cy: 15, r: 4 }), React.createElement('circle', { cx: 18, cy: 15, r: 4 }), React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'm6 11-2-2 1.5-1.5a2 2 0 0 1 1.414-.586H8.5m6 0h1.586a2 2 0 0 1 1.414.586L19 9l-2 2M10 15h4' }));
+        const Sun = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('circle', { cx: 12, cy: 12, r: 4 }), React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 6.34l-1.41-1.41M19.07 19.07l-1.41-1.41' }));
+        const Sparkles = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.091zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456z' }));
+        const MapPin = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z' }), React.createElement('circle', { cx: 12, cy: 10, r: 3 }));
+        const Clock = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('polyline', { points: '12,6 12,12 16,14' }));
+        const Phone = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z' }));
+
+        const GlassesFinderWizard = () => {
+            const [currentStep, setCurrentStep] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [isGeneratingInsights, setIsGeneratingInsights] = useState(false);
+            const [aiInsights, setAiInsights] = useState('');
+            const [loadingProgress, setLoadingProgress] = useState(0);
+            const [showSectionComplete, setShowSectionComplete] = useState(false);
+            const [completedSectionData, setCompletedSectionData] = useState(null);
+            const [hasBookedExam, setHasBookedExam] = useState(false);
+            const [selectedSlot, setSelectedSlot] = useState(null);
+            const [selectedDate, setSelectedDate] = useState(null);
+            const [availableTimes, setAvailableTimes] = useState([]);
+            const [userZipCode, setUserZipCode] = useState('');
+
+            const questions = [
+                {
+                    type: 'intro',
+                    section: "Let's Get Started",
+                    title: "Let's match your glasses with your lifestyle",
+                    subtitle: "Answer a few quick questions to discover which types of glasses actually fit your day-to-day life.",
+                    note: "(Takes 2 minutes – and you might learn something useful about your vision!)"
+                },
+                {
+                    type: 'multiple',
+                    section: "Your Current Setup",
+                    question: "Do you currently wear glasses or lenses?",
+                    options: ["Yes, I wear glasses", "Yes, I wear both glasses and contact lenses", "No, but I think I need them", "No, and I don't think I need them"]
+                },
+                {
+                    type: 'single',
+                    section: "Your Current Setup",
+                    question: "How many pairs of glasses do you regularly use?",
+                    options: ["Just one", "Two", "More than two", "None"]
+                },
+                {
+                    type: 'multiple',
+                    section: "Your Current Setup",
+                    question: "What do you mostly use your glasses for?",
+                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion"]
+                },
+                {
+                    type: 'single',
+                    section: "Your Current Setup",
+                    question: "Are you happy with your current setup?",
+                    options: ["Not at all 😕", "Could be better 😐", "Pretty happy 🙂", "Love it 😍"]
+                },
+                {
+                    type: 'multiple',
+                    section: "Your Current Setup",
+                    question: "Do you prefer specific brands or styles?",
+                    options: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "I go for comfort over brands", "Not sure / no preference"]
+                },
+                {
+                    type: 'single',
+                    section: "Lens Comfort & Eye Experience",
+                    question: "Do you think you would benefit from a new pair of glasses/lenses?",
+                    options: ["Yes, definitely", "Maybe, I'm not sure", "Probably not", "No, I'm satisfied"]
+                },
+                {
+                    type: 'single',
+                    section: "Lens Comfort & Eye Experience",
+                    question: "Have your lenses been updated in the past 2 years?",
+                    options: ["Yes", "No", "Not sure"]
+                },
+                {
+                    type: 'multiple',
+                    section: "Lens Comfort & Eye Experience",
+                    question: "Do you ever experience any of the following?",
+                    options: ["Headaches", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "None of these"]
+                },
+                {
+                    type: 'single',
+                    section: "Lens Comfort & Eye Experience",
+                    question: "What type of lenses do you have today?",
+                    options: ["Single vision", "Progressive (multifocal)", "Not sure"]
+                },
+                {
+                    type: 'single',
+                    section: "Lens Comfort & Eye Experience",
+                    question: "How many hours per day are you in front of a screen?",
+                    options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
+                },
+                {
+                    type: 'single',
+                    section: "Lifestyle & Vision Needs",
+                    question: "Do you have issues with your current glasses while driving?",
+                    options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"]
+                },
+                {
+                    type: 'multiple',
+                    section: "Lifestyle & Vision Needs",
+                    question: "What do you usually do in your free time?",
+                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
+                },
+                {
+                    type: 'single',
+                    section: "Lifestyle & Vision Needs",
+                    question: "Do you ever avoid wearing glasses because they get in the way of your activities?",
+                    options: ["Yes", "Sometimes", "No"]
+                },
+                {
+                    type: 'text',
+                    section: "Lifestyle & Vision Needs",
+                    question: "Tell us about your specific activities and hobbies",
+                    placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc."
+                },
+                {
+                    type: 'single',
+                    section: "Sun, Style & Self-Expression",
+                    question: "Do you wear sunglasses with prescription?",
+                    options: ["Yes", "No, but I'd like to", "No"]
+                },
+                {
+                    type: 'slider',
+                    section: "Sun, Style & Self-Expression",
+                    question: "What is important for you in glasses?",
+                    sliderLabels: ["Price", "Style"],
+                    sliderDefault: 50
+                }
+            ];
+
+            const downloadResultsAsPDF = () => {
+                try {
+                    const content = `
+                        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                            <h1 style="color: #3b82f6; text-align: center; margin-bottom: 30px;">Your Personalized Vision Plan</h1>
+                            
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                                <h2 style="color: #1f2937; margin-bottom: 15px;">📊 Your Answers Summary</h2>
+                                ${Object.entries(answers).map(([key, value]) => {
+                                    const question = questions[parseInt(key)];
+                                    if (!question) return '';
+                                    return `<p><strong>${question.question}</strong><br/>${Array.isArray(value) ? value.join(', ') : value}</p>`;
+                                }).join('')}
+                            </div>
+                            
+                            <div style="background: #eff6ff; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                                <h2 style="color: #1f2937; margin-bottom: 15px;">🧠 AI-Powered Insights</h2>
+                                <div>${aiInsights.replace(/\n/g, '<br/>')}</div>
+                            </div>
+                            
+                            <div style="text-align: center; margin-top: 30px; font-size: 12px; color: #6b7280;">
+                                <p>Generated by OptiQa Vision Finder • ${new Date().toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    const printWindow = window.open('', '_blank');
+                    if (printWindow) {
+                        printWindow.document.write(`
+                            <html>
+                                <head><title>Your Vision Plan - OptiQa</title></head>
+                                <body>${content}</body>
+                            </html>
+                        `);
+                        printWindow.document.close();
+                        printWindow.print();
+                    }
+                } catch (error) {
+                    alert('Download failed. Please try again or take a screenshot of your results.');
+                }
+            };
+
+            const generateAIInsights = async () => {
+                setIsGeneratingInsights(true);
+                setLoadingProgress(0);
+                
+                const progressInterval = setInterval(() => {
+                    setLoadingProgress(prev => {
+                        if (prev >= 95) {
+                            clearInterval(progressInterval);
+                            return 95;
+                        }
+                        return prev + Math.random() * 15;
+                    });
+                }, 200);
+
+                const timeoutId = setTimeout(() => {
+                    console.log("AI request timed out, using fallback");
+                    clearInterval(progressInterval);
+                    setLoadingProgress(100);
+                    setTimeout(() => {
+                        setAiInsights(generatePersonalizedFallback());
+                        setIsGeneratingInsights(false);
+                    }, 500);
+                }, 4000); // Faster timeout for better UX
+                
+                try {
+                    console.log("🤖 Starting Gemini AI analysis...");
+                    console.log("User answers:", answers);
+                    
+                    // Correct Gemini API endpoint and format
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBwPLk8BhFMmAMWSAlKC3DOgPMNqL6BJXA`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{
+                                    text: `You're a friendly vision expert helping someone find the perfect glasses for their lifestyle. Based on their questionnaire, give personalized, practical advice.
+
+Their answers: ${JSON.stringify(answers, null, 2)}
+
+Provide exactly 3 glasses recommendations in this warm, helpful format:
+
+**What I noticed about your vision needs:** [1-2 sentences about their main challenges based on their answers]
+
+**Here's what would work best for you:**
+• **For daily life:** [Focus on their main activities and comfort needs, no specific brands]
+• **For ${answers[14] || 'your activities'}:** [Match their specific hobby/sport/lifestyle mentioned]
+• **As a backup:** [Practical third option for convenience/specific situations]
+
+**Why this makes sense:** [Brief explanation of how these solve their specific problems]
+
+**Quick tips for you:** [2-3 short, actionable tips based on their lifestyle]
+
+Keep it conversational, avoid technical jargon, and focus on how each recommendation improves their daily experience.`
+                                }]
+                            }]
+                        })
+                    });
+                    
+                    clearTimeout(timeoutId);
+                    
+                    if (!response.ok) {
+                        console.log(`❌ Gemini API failed: ${response.status} - ${response.statusText}`);
+                        console.log("Response headers:", [...response.headers.entries()]);
+                        
+                        // Try to get more details about the error
+                        const errorText = await response.text();
+                        console.log("Error response body:", errorText);
+                        
+                        throw new Error(`API request failed: ${response.status} - ${errorText}`);
+                    }
+                    
+                    const data = await response.json();
+                    console.log("✅ Gemini API success!", data);
+                    setLoadingProgress(100);
+                    
+                    setTimeout(() => {
+                        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+                            setAiInsights(data.candidates[0].content.parts[0].text);
+                            console.log("🎉 Real AI insights from Gemini!");
+                        } else {
+                            console.log("⚠️ Unexpected Gemini response format:", data);
+                            setAiInsights(generatePersonalizedFallback());
+                        }
+                        setIsGeneratingInsights(false);
+                    }, 500);
+                    
+                } catch (error) {
+                    clearTimeout(timeoutId);
+                    console.log("🔄 Gemini failed, using intelligent fallback:", error.message);
+                    setLoadingProgress(100);
+                    
+                    setTimeout(() => {
+                        setAiInsights(generatePersonalizedFallback());
+                        setIsGeneratingInsights(false);
+                        console.log("✅ Smart recommendations generated from your answers!");
+                    }, 1000);
+                }
+            };
+
+            const generatePersonalizedFallback = () => {
+                const screenTime = Object.values(answers).find(a => 
+                    typeof a === 'string' && (a.includes('8 hours') || a.includes('More than 8'))
+                );
+                const hasEyeStrain = Object.values(answers).some(a => 
+                    Array.isArray(a) && a.includes('Eye strain at screen')
+                );
+                const hasProgressives = Object.values(answers).some(a => 
+                    typeof a === 'string' && a.includes('Progressive')
+                );
+                const activitiesText = Object.values(answers).find(a => 
+                    typeof a === 'string' && a.length > 10 && !a.includes('hours') && !a.includes('Progressive')
+                );
+                const isActiveUser = Object.values(answers).some(a => 
+                    Array.isArray(a) && (a.includes('Exercise or play sports') || a.includes('Spend time outdoors'))
+                );
+
+                let analysis = "Based on your responses, you have diverse visual needs throughout your day that would benefit from a strategic multi-glasses approach.";
+                let primary = "**Primary:** Daily wear glasses with anti-reflective coating and premium lenses";
+                let secondary = "**Secondary:** Prescription sunglasses with UV protection and polarized lenses";
+                let third = "**Third:** Backup glasses or specialized computer lenses";
+
+                if (screenTime && hasEyeStrain) {
+                    analysis = "Your extensive screen time combined with eye strain symptoms indicates you need specialized solutions for digital comfort and general vision needs.";
+                    primary = "**Primary:** Computer glasses with blue light filtering and anti-reflective coating - optimized for your extensive screen work";
+                    third = "**Third:** General-purpose everyday glasses for non-screen activities";
+                }
+
+                if (hasProgressives) {
+                    primary = "**Primary:** Progressive lenses with premium coatings - seamless vision at all distances";
+                    third = "**Third:** Dedicated reading glasses for extended close-up work and enhanced comfort";
+                }
+
+                if (activitiesText && activitiesText.length > 20) {
+                    if (activitiesText.toLowerCase().includes('sport') || activitiesText.toLowerCase().includes('tennis') || activitiesText.toLowerCase().includes('cycling')) {
+                        secondary = "**Secondary:** Sport-specific glasses with impact-resistant lenses and secure fit - perfect for your active lifestyle";
+                    }
+                    if (activitiesText.toLowerCase().includes('driving') || activitiesText.toLowerCase().includes('night')) {
+                        third = "**Third:** Specialized driving glasses with anti-glare coating for enhanced night vision safety";
+                    }
+                }
+
+                return `**Your Vision Analysis:** ${analysis} Your questionnaire responses show specific patterns that guide us toward a personalized three-glasses system.\n\n**Recommended Eyewear System:**\n• ${primary}\n• ${secondary}\n• ${third}\n\n**Why This Setup:** This three-glasses approach ensures optimal vision for your specific lifestyle demands. Each pair addresses different visual environments and activities, providing comprehensive coverage for work, leisure, and daily life.\n\n**Activity-Specific Tips:** Keep your most-used glasses easily accessible in your daily routine. Consider lens cleaning kits for each pair to maintain optimal clarity. Schedule regular eye exams to keep prescriptions current and adjust recommendations as your needs evolve.`;
+            };
+
+            const bookExamSlot = (slot) => {
+                setSelectedSlot(slot);
+                setHasBookedExam(true);
+            };
+
+            const renderBookingCalendar = () => {
+                const today = new Date();
+
+                const generateCalendarDays = () => {
+                    const days = [];
+                    let currentDate = new Date(today);
+                    currentDate.setDate(today.getDate() + 1);
+                    
+                    while (days.length < 10) {
+                        if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                            days.push(new Date(currentDate));
+                        }
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+                    return days;
+                };
+
+                const generateTimeSlotsForDate = (date) => {
+                    const times = [];
+                    const startHour = 9;
+                    const endHour = 17;
+                    
+                    for (let hour = startHour; hour <= endHour; hour++) {
+                        if (hour === 13) continue;
+                        
+                        const time = new Date(date);
+                        time.setHours(hour, 0, 0, 0);
+                        
+                        const isBooked = Math.random() < 0.3;
+                        
+                        times.push({
+                            time: time.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true }),
+                            datetime: time,
+                            isBooked
+                        });
+                    }
+                    return times;
+                };
+
+                const calendarDays = generateCalendarDays();
+
+                const handleDateSelect = (date) => {
+                    setSelectedDate(date);
+                    setAvailableTimes(generateTimeSlotsForDate(date));
+                };
+
+                const selectTimeSlot = (time) => {
+                    const slot = {
+                        date: selectedDate?.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }),
+                        time: time.time,
+                        datetime: time.datetime
+                    };
+                    bookExamSlot(slot);
+                };
+                
+                return React.createElement('div', { className: "space-y-6" },
+                    React.createElement('div', { className: "text-center" },
+                        React.createElement('h3', { className: "text-2xl font-bold text-gray-800 mb-4" }, "📅 Book Your Eye Exam"),
+                        React.createElement('p', { className: "text-gray-600 mb-6" },
+                            "Schedule a comprehensive eye exam to get personalized recommendations from our certified opticians."
+                        )
+                    ),
+
+                    React.createElement('div', { className: "bg-white rounded-xl p-6 border border-gray-200 shadow-sm" },
+                        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mb-4" }, "1. Enter Your Zip Code"),
+                        React.createElement('div', { className: "max-w-md" },
+                            React.createElement('input', {
+                                type: "text",
+                                value: userZipCode,
+                                onChange: (e) => setUserZipCode(e.target.value.replace(/\D/g, '').slice(0, 5)),
+                                placeholder: "Enter zip code (e.g., 28001)",
+                                className: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg",
+                                maxLength: 5
+                            }),
+                            React.createElement('p', { className: "text-sm text-gray-500 mt-2" }, "We'll find the closest certified opticians in your area")
+                        )
+                    ),
+
+                    userZipCode.length >= 5 && React.createElement('div', { className: "bg-white rounded-xl p-6 border border-gray-200 shadow-sm" },
+                        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mb-4" }, "2. Select a Date"),
+                        React.createElement('div', { className: "grid grid-cols-5 gap-3" },
+                            calendarDays.map((day, index) =>
+                                React.createElement('button', {
+                                    key: index,
+                                    onClick: () => handleDateSelect(day),
+                                    className: `p-3 border rounded-lg text-center transition-all hover:border-blue-400 ${
+                                        selectedDate?.toDateString() === day.toDateString()
+                                            ? 'border-blue-500 bg-blue-50 text-blue-700'
+                                            : 'border-gray-200 hover:bg-gray-50'
+                                    }`
+                                },
+                                    React.createElement('div', { className: "text-xs text-gray-500 font-medium" },
+                                        day.toLocaleDateString('en-US', { weekday: 'short' })
+                                    ),
+                                    React.createElement('div', { className: "text-lg font-semibold" },
+                                        day.getDate()
+                                    ),
+                                    React.createElement('div', { className: "text-xs text-gray-500" },
+                                        day.toLocaleDateString('en-US', { month: 'short' })
+                                    )
+                                )
+                            )
+                        )
+                    ),
+
+                    selectedDate && userZipCode.length >= 5 && React.createElement('div', { className: "bg-white rounded-xl p-6 border border-gray-200 shadow-sm" },
+                        React.createElement('h4', { className: "text-lg font-semibold text-gray-800 mb-4" },
+                            `3. Choose a Time for ${selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`
+                        ),
+                        React.createElement('div', { className: "grid grid-cols-3 md:grid-cols-4 gap-3" },
+                            availableTimes.map((timeSlot, index) =>
+                                React.createElement('button', {
+                                    key: index,
+                                    onClick: () => selectTimeSlot(timeSlot),
+                                    disabled: timeSlot.isBooked,
+                                    className: `p-3 rounded-lg font-medium transition-all ${
+                                        timeSlot.isBooked
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
+                                            : 'border border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-400'
+                                    }`
+                                },
+                                    timeSlot.isBooked ? 
+                                        React.createElement('div', { className: "flex flex-col items-center" },
+                                            React.createElement('span', { className: "text-sm" }, timeSlot.time),
+                                            React.createElement('span', { className: "text-xs" }, "Booked")
+                                        ) : 
+                                        timeSlot.time
+                                )
+                            )
+                        )
+                    ),
+
+                    React.createElement('div', { className: "text-center text-sm text-gray-500" },
+                        React.createElement('p', null, "💡 All exams include comprehensive vision testing and personalized glasses recommendations")
+                    )
+                );
+            };
+
+            const renderOpticiansList = () => {
+                const mockStores = [
+                    { 
+                        name: "Optica Nova", 
+                        distance: "550m", 
+                        specialty: "Fast service & great progressive lens fittings", 
+                        phone: "+34 912 345 678",
+                        address: "Calle Gran Via 45, Madrid",
+                    },
+                    { 
+                        name: "CentroVisión", 
+                        distance: "1.1km", 
+                        specialty: "Specialists in sports and sunglasses", 
+                        phone: "+34 912 345 679",
+                        address: "Plaza Mayor 12, Madrid", 
+                    },
+                    { 
+                        name: "Óptica Bassol", 
+                        distance: "2.3km", 
+                        specialty: "Premium frames & lens upgrade support", 
+                        phone: "+34 912 345 680",
+                        address: "Paseo de la Castellana 89, Madrid",
+                    }
+                ];
+
+                return React.createElement('div', { className: "space-y-6" },
+                    React.createElement('div', { className: "bg-green-50 rounded-xl p-4 border border-green-200" },
+                        React.createElement('div', { className: "flex items-center space-x-3" },
+                            React.createElement('div', { className: "w-10 h-10 bg-green-500 rounded-full flex items-center justify-center" },
+                                React.createElement('svg', { className: "w-6 h-6 text-white", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+                                    React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M5 13l4 4L19 7" })
+                                )
+                            ),
+                            React.createElement('div', null,
+                                React.createElement('h4', { className: "font-semibold text-green-800" }, "Exam Booked Successfully!"),
+                                React.createElement('p', { className: "text-sm text-green-700" },
+                                    `${selectedSlot?.date} at ${selectedSlot?.time} in ${userZipCode} - Confirmation details sent to your email`
+                                )
+                            )
+                        )
+                    ),
+
+                    React.createElement('div', { className: "bg-white rounded-2xl p-6 border border-gray-200 shadow-lg" },
+                        React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4 flex items-center" },
+                            React.createElement(MapPin, { className: "w-5 h-5 mr-2 text-blue-600" }),
+                            "Your Closest Certified Opticians"
+                        ),
+                        React.createElement('div', { className: "space-y-4" },
+                            mockStores.map((store, index) =>
+                                React.createElement('div', { key: index, className: "p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-300 transition-colors" },
+                                    React.createElement('div', { className: "flex justify-between items-start mb-2" },
+                                        React.createElement('h4', { className: "font-semibold text-gray-800" }, store.name),
+                                        React.createElement('span', { className: "text-sm text-gray-500 bg-white px-2 py-1 rounded-full" }, store.distance)
+                                    ),
+                                    React.createElement('p', { className: "text-gray-600 text-sm mb-1" }, store.specialty),
+                                    React.createElement('p', { className: "text-gray-500 text-xs mb-3" }, store.address),
+                                    React.createElement('div', { className: "flex space-x-3" },
+                                        React.createElement('button', { className: "flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 transition-colors" },
+                                            "Get Directions"
+                                        ),
+                                        React.createElement('button', { className: "flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors" },
+                                            React.createElement(Phone, { className: "w-4 h-4" })
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ),
+
+                    React.createElement('div', { className: "bg-white rounded-2xl p-6 border border-gray-200 shadow-lg" },
+                        React.createElement('h3', { className: "text-xl font-semibold text-gray-800 mb-4" }, "📍 Store Locations Map"),
+                        React.createElement('div', { 
+                            id: "opticians-map", 
+                            className: "rounded-lg h-80 border border-gray-300",
+                            style: { minHeight: "320px" }
+                        }),
+                        
+                        React.createElement('div', { className: "mt-4 bg-gray-50 rounded-lg p-4" },
+                            React.createElement('div', { className: "flex items-center justify-between mb-3" },
+                                React.createElement('h5', { className: "font-semibold text-gray-800" }, "Nearby Locations"),
+                                React.createElement('span', { className: "text-sm text-gray-500" }, `Based on zip code: ${userZipCode || 'Not provided'}`)
+                            ),
+                            React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-4" },
+                                mockStores.map((store, index) =>
+                                    React.createElement('div', { key: index, className: "flex items-center space-x-3" },
+                                        React.createElement('div', { 
+                                            className: `w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                                                index === 0 ? 'bg-red-500' : index === 1 ? 'bg-blue-500' : 'bg-green-500'
+                                            }`
+                                        }, index + 1),
+                                        React.createElement('div', null,
+                                            React.createElement('div', { className: "font-medium text-gray-800 text-sm" }, store.name),
+                                            React.createElement('div', { className: "text-gray-500 text-xs" }, store.distance + " away")
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                );
+            };
+
+            const updateAnswer = (questionNum, value) => {
+                setAnswers(prev => ({
+                    ...prev,
+                    [questionNum]: value
+                }));
+            };
+
+            const isAnswered = () => {
+                if (currentStep === 0) return true;
+                if (currentStep >= questions.length) return true;
+                
+                const answer = answers[currentStep];
+                const question = questions[currentStep];
+                
+                if (question?.type === 'multiple') {
+                    return Array.isArray(answer) && answer.length > 0;
+                }
+                
+                if (question?.type === 'slider') {
+                    return true;
+                }
+                
+                if (question?.type === 'text') {
+                    return true;
+                }
+                
+                return answer !== undefined && answer !== null && answer !== '';
+            };
+
+            const getProgress = () => {
+                return (currentStep / (questions.length + 1)) * 100;
+            };
+
+            const getSectionProgress = () => {
+                const sections = [
+                    { name: "Your Current Setup", start: 1, end: 5 },
+                    { name: "Lens Comfort & Eye Experience", start: 6, end: 10 },
+                    { name: "Lifestyle & Vision Needs", start: 11, end: 13 },
+                    { name: "Sun, Style & Self-Expression", start: 14, end: 15 }
+                ];
+
+                return sections.map((section) => {
+                    let progress = 0;
+                    if (currentStep < section.start) {
+                        progress = 0;
+                    } else if (currentStep > section.end) {
+                        progress = 100;
+                    } else {
+                        const sectionProgress = (currentStep - section.start + 1) / (section.end - section.start + 1);
+                        progress = sectionProgress * 100;
+                    }
+                    
+                    return {
+                        ...section,
+                        progress,
+                        isActive: currentStep >= section.start && currentStep <= section.end,
+                        isComplete: currentStep > section.end
+                    };
+                });
+            };
+
+            const getSectionColor = (section) => {
+                switch (section) {
+                    case "Let's Get Started": return "bg-blue-500";
+                    case "Your Current Setup": return "bg-blue-500";
+                    case "Lens Comfort & Eye Experience": return "bg-yellow-500";
+                    case "Lifestyle & Vision Needs": return "bg-green-500";
+                    case "Sun, Style & Self-Expression": return "bg-red-500";
+                    default: return "bg-purple-500";
+                }
+            };
+
+            const getSectionIcon = (section) => {
+                switch (section) {
+                    case "Let's Get Started": return Sparkles;
+                    case "Your Current Setup": return Glasses;
+                    case "Lens Comfort & Eye Experience": return Eye;
+                    case "Lifestyle & Vision Needs": return Clock;
+                    case "Sun, Style & Self-Expression": return Sun;
+                    default: return Sparkles;
+                }
+            };
+
+            const getSectionInsights = (sectionName, answers) => {
+                const insights = {
+                    "Your Current Setup": {
+                        title: "Current Setup Complete!",
+                        insight: Object.values(answers).some(a => Array.isArray(a) ? a.includes("Yes, I wear glasses") : a === "Yes, I wear glasses") 
+                            ? "We learned about your current glasses and how you use them daily."
+                            : "We learned about your vision needs and lifestyle preferences."
+                    },
+                    "Lens Comfort & Eye Experience": {
+                        title: "Vision Analysis Complete!",
+                        insight: Object.values(answers).some(a => Array.isArray(a) ? a.includes("Eye strain at screen") : a === "Eye strain at screen")
+                            ? "We identified potential screen-related eye strain to address."
+                            : "We analyzed your current lens performance and eye comfort."
+                    },
+                    "Lifestyle & Vision Needs": {
+                        title: "Lifestyle Mapped!",
+                        insight: Object.values(answers).some(a => Array.isArray(a) ? a.includes("Exercise or play sports") : false)
+                            ? "We see you're active - we'll factor that into your recommendations."
+                            : "We mapped how you spend your time to match the right glasses."
+                    },
+                    "Sun, Style & Self-Expression": {
+                        title: "Style Preferences Noted!",
+                        insight: "Perfect! We now have everything needed for your personalized vision plan."
+                    }
+                };
+                return insights[sectionName] || { title: "Section Complete!", insight: "Great progress!" };
+            };
+
+            const checkSectionCompletion = (newStep) => {
+                const currentQuestion = questions[newStep - 1];
+                const nextQuestion = questions[newStep];
+                
+                if (!currentQuestion || !nextQuestion) return false;
+                
+                return currentQuestion.section !== nextQuestion.section;
+            };
+
+            const nextStep = async () => {
+                const newStep = currentStep + 1;
+                
+                if (newStep > 1 && newStep < questions.length && checkSectionCompletion(newStep)) {
+                    const completedSection = questions[currentStep].section;
+                    const sectionData = getSectionInsights(completedSection, answers);
+                    
+                    setCompletedSectionData(sectionData);
+                    setShowSectionComplete(true);
+                    
+                    setTimeout(() => {
+                        setShowSectionComplete(false);
+                        setCurrentStep(newStep);
+                    }, 2500);
+                    return;
+                }
+                
+                if (currentStep === questions.length - 1) {
+                    setCurrentStep(newStep);
+                    setTimeout(() => {
+                        generateAIInsights();
+                    }, 100);
+                } else {
+                    setCurrentStep(newStep);
+                }
+            };
+
+            const prevStep = () => {
+                setCurrentStep(prev => prev - 1);
+            };
+
+            const renderSectionComplete = () => {
+                if (!completedSectionData) return null;
+                
+                return React.createElement('div', { className: "text-center space-y-6" },
+                    React.createElement('div', { className: "relative w-24 h-24 mx-auto mb-6" },
+                        React.createElement('div', { className: "w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg pulse-once" },
+                            React.createElement('svg', { 
+                                className: "w-12 h-12 text-white", 
+                                fill: "none", 
+                                stroke: "currentColor", 
+                                viewBox: "0 0 24 24"
+                            },
+                                React.createElement('path', { 
+                                    strokeLinecap: "round", 
+                                    strokeLinejoin: "round", 
+                                    strokeWidth: 3, 
+                                    d: "M5 13l4 4L19 7"
+                                })
+                            )
+                        )
+                    ),
+                    
+                    React.createElement('div', { className: "space-y-3" },
+                        React.createElement('h2', { className: "text-2xl font-bold text-gray-800" }, completedSectionData.title),
+                        React.createElement('p', { className: "text-lg text-gray-600 max-w-md mx-auto" }, completedSectionData.insight)
+                    ),
+                    
+                    React.createElement('div', { className: "flex items-center justify-center space-x-2 text-green-600" },
+                        React.createElement('div', { className: "w-2 h-2 bg-green-500 rounded-full animate-ping" }),
+                        React.createElement('span', { className: "text-sm font-medium" }, "Moving to next section..."),
+                        React.createElement('div', { className: "w-2 h-2 bg-green-500 rounded-full animate-ping" })
+                    )
+                );
+            };
+
+            const renderQuestion = () => {
+                if (currentStep >= questions.length) return renderResults();
+                
+                const q = questions[currentStep];
+
+                if (q.type === 'slider' && answers[currentStep] === undefined) {
+                    updateAnswer(currentStep, q.sliderDefault);
+                }
+
+                if (q.type === 'intro') {
+                    return React.createElement('div', { className: "text-center space-y-6" },
+                        React.createElement('div', { className: "w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6" },
+                            React.createElement(Glasses, { className: "w-10 h-10 text-white" })
+                        ),
+                        React.createElement('h2', { className: "text-3xl font-bold text-gray-800" }, q.title),
+                        React.createElement('p', { className: "text-lg text-gray-600 max-w-md mx-auto" }, q.subtitle),
+                        React.createElement('p', { className: "text-sm text-gray-500" }, q.note)
+                    );
+                }
+
+                return React.createElement('div', { className: "space-y-6" },
+                    React.createElement('h3', { className: "text-2xl font-semibold text-gray-800 text-center" }, q.question),
+                    
+                    q.type === 'slider' ? 
+                        React.createElement('div', { className: "space-y-6" },
+                            React.createElement('div', { className: "flex justify-between text-sm text-gray-600 px-2" },
+                                React.createElement('span', null, q.sliderLabels[0] + " focused"),
+                                React.createElement('span', null, q.sliderLabels[1] + " focused")
+                            ),
+                            React.createElement('div', { className: "relative px-4" },
+                                React.createElement('input', {
+                                    type: "range",
+                                    min: "0",
+                                    max: "100",
+                                    value: answers[currentStep] || q.sliderDefault,
+                                    onChange: (e) => updateAnswer(currentStep, parseInt(e.target.value)),
+                                    className: "w-full h-3 bg-gray-200 rounded-lg appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500",
+                                    style: {
+                                        background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${answers[currentStep] || q.sliderDefault}%, #e5e7eb ${answers[currentStep] || q.sliderDefault}%, #e5e7eb 100%)`
+                                    }
+                                })
+                            ),
+                            React.createElement('div', { className: "text-center text-sm text-gray-500" },
+                                `Current preference: ${
+                                    (answers[currentStep] || q.sliderDefault) < 25 ? 'Strongly price focused' : 
+                                    (answers[currentStep] || q.sliderDefault) < 50 ? 'Somewhat price focused' :
+                                    (answers[currentStep] || q.sliderDefault) < 75 ? 'Somewhat style focused' : 
+                                    'Strongly style focused'
+                                }`
+                            )
+                        ) :
+                    q.type === 'text' ?
+                        React.createElement('div', { className: "space-y-4" },
+                            React.createElement('textarea', {
+                                value: answers[currentStep] || '',
+                                onChange: (e) => updateAnswer(currentStep, e.target.value),
+                                placeholder: q.placeholder,
+                                className: "w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none",
+                                rows: 4
+                            }),
+                            React.createElement('div', { className: "text-center space-y-3" },
+                                React.createElement('p', { className: "text-sm text-gray-500" },
+                                    "💡 The more specific you are, the better we can tailor your recommendations!"
+                                ),
+                                React.createElement('button', {
+                                    onClick: () => updateAnswer(currentStep, 'skipped'),
+                                    className: "inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
+                                },
+                                    React.createElement('span', null, "Skip this question"),
+                                    React.createElement('svg', { className: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+                                        React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M13 7l5 5m0 0l-5 5m5-5H6" })
+                                    )
+                                )
+                            )
+                        ) :
+                        React.createElement('div', { className: "space-y-3" },
+                            q.options.map((option, index) =>
+                                React.createElement('button', {
+                                    key: index,
+                                    onClick: () => {
+                                        if (q.type === 'multiple') {
+                                            const current = answers[currentStep] || [];
+                                            const updated = current.includes(option)
+                                                ? current.filter(item => item !== option)
+                                                : [...current, option];
+                                            updateAnswer(currentStep, updated);
+                                        } else {
+                                            updateAnswer(currentStep, option);
+                                        }
+                                    },
+                                    className: `w-full p-4 text-left rounded-xl border-2 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50 ${
+                                        q.type === 'multiple'
+                                            ? (answers[currentStep] || []).includes(option)
+                                                ? 'border-blue-500 bg-blue-100 text-blue-800'
+                                                : 'border-gray-200 bg-white'
+                                            : answers[currentStep] === option
+                                                ? 'border-blue-500 bg-blue-100 text-blue-800'
+                                                : 'border-gray-200 bg-white'
+                                    }`
+                                },
+                                    React.createElement('div', { className: "flex items-center justify-between" },
+                                        React.createElement('span', { className: "font-medium" }, option),
+                                        q.type === 'multiple' && React.createElement('div', { 
+                                            className: `w-5 h-5 rounded border-2 flex items-center justify-center ${
+                                                (answers[currentStep] || []).includes(option)
+                                                    ? 'border-blue-500 bg-blue-500'
+                                                    : 'border-gray-300'
+                                            }`
+                                        },
+                                            (answers[currentStep] || []).includes(option) && 
+                                                React.createElement('div', { className: "w-2 h-2 bg-white rounded-full" })
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                );
+            };
+
+            const renderResults = () => {
+                if (isGeneratingInsights) {
+                    return React.createElement('div', { className: "text-center space-y-8" },
+                        React.createElement('div', { className: "w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6" },
+                            React.createElement('div', { className: "animate-spin rounded-full h-10 w-10 border-b-2 border-white" })
+                        ),
+                        React.createElement('div', { className: "space-y-4" },
+                            React.createElement('h2', { className: "text-3xl font-bold text-gray-800" }, "Creating Your Vision Plan"),
+                            React.createElement('p', { className: "text-lg text-gray-600" }, "Analyzing your responses to provide personalized recommendations...")
+                        ),
+                        
+                        React.createElement('div', { className: "max-w-md mx-auto space-y-4" },
+                            React.createElement('div', { className: "flex justify-between text-sm text-gray-600" },
+                                React.createElement('span', null, "Generating your personalized insights"),
+                                React.createElement('span', null, Math.round(loadingProgress) + "%")
+                            ),
+                            React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-3" },
+                                React.createElement('div', {
+                                    className: "bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-300 ease-out",
+                                    style: { width: `${loadingProgress}%` }
+                                })
+                            ),
+                            React.createElement('p', { className: "text-sm text-gray-500" }, "This may take a few moments...")
+                        )
+                    );
+                }
+
+                return React.createElement('div', { className: "space-y-8" },
+                    React.createElement('div', { className: "text-center" },
+                        React.createElement('div', { className: "w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-6" },
+                            React.createElement(Sparkles, { className: "w-10 h-10 text-white" })
+                        ),
+                        React.createElement('h2', { className: "text-3xl font-bold text-gray-800 mb-4" }, "Your Personalized Vision Plan")
+                    ),
+
+                    React.createElement('div', { className: "bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 border border-blue-100 shadow-lg" },
+                        React.createElement('div', { className: "flex items-start space-x-4 mb-6" },
+                            React.createElement('div', { className: "w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center flex-shrink-0" },
+                                React.createElement(Sparkles, { className: "w-8 h-8 text-white" })
+                            ),
+                            React.createElement('div', { className: "flex-1" },
+                                React.createElement('h3', { className: "text-2xl font-bold text-gray-800 mb-2" }, "Your Vision Profile"),
+                                React.createElement('p', { className: "text-gray-600" }, "AI-powered analysis based on your lifestyle and vision needs")
+                            )
+                        ),
+                        
+                        React.createElement('div', { className: "bg-white rounded-xl p-6 shadow-sm border border-gray-100" },
+                            React.createElement('div', { className: "max-w-none" },
+                                React.createElement('div', { className: "text-gray-700 leading-relaxed space-y-4" },
+                                    aiInsights.split('\n').map((line, index) => {
+                                        const trimmedLine = line.trim();
+                                        if (!trimmedLine) return null;
+                                        
+                                        if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**')) {
+                                            const headerText = trimmedLine.slice(2, -2);
+                                            return React.createElement('h4', { 
+                                                key: index, 
+                                                className: "text-lg font-semibold text-gray-800 mb-3 mt-6 first:mt-0" 
+                                            }, headerText);
+                                        }
+                                        
+                                        if (trimmedLine.startsWith('•')) {
+                                            const bulletText = trimmedLine.substring(1).trim();
+                                            const processedText = bulletText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                                            
+                                            return React.createElement('div', { 
+                                                key: index, 
+                                                className: "flex items-start space-x-3 mb-3" 
+                                            },
+                                                React.createElement('div', { className: "w-2 h-2 bg-blue-500 rounded-full mt-3 flex-shrink-0" }),
+                                                React.createElement('p', {
+                                                    className: "m-0 text-base leading-relaxed text-gray-700",
+                                                    dangerouslySetInnerHTML: { __html: processedText }
+                                                })
+                                            );
+                                        }
+                                        
+                                        const processedLine = trimmedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                                        
+                                        return React.createElement('p', {
+                                            key: index,
+                                            className: "m-0 text-base leading-relaxed text-gray-700",
+                                            dangerouslySetInnerHTML: { __html: processedLine }
+                                        });
+                                    })
+                                )
+                            )
+                        )
+                    ),
+
+                    React.createElement('div', { className: "text-center" },
+                        React.createElement('button', {
+                            onClick: downloadResultsAsPDF,
+                            className: "inline-flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"
+                        },
+                            React.createElement('svg', { className: "w-6 h-6", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+                                React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" })
+                            ),
+                            React.createElement('div', { className: "text-left" },
+                                React.createElement('div', { className: "text-lg" }, "Download Your Vision Profile Now"),
+                                React.createElement('div', { className: "text-sm opacity-90" }, "Bring it to your eye test!")
+                            )
+                        )
+                    ),
+
+                    !hasBookedExam ? renderBookingCalendar() : renderOpticiansList(),
+
+                    React.createElement('div', { className: "text-center text-gray-500 text-sm" },
+                        React.createElement('p', null, "💡 Tip: Bring your current glasses and this report to your appointment for the best experience!")
+                    )
+                );
+            };
+
+            const currentQuestion = questions[currentStep];
+            const currentSection = currentStep >= questions.length ? "Your Personalized Results" : currentQuestion?.section;
+
+            return React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8" },
+                React.createElement('div', { className: "max-w-2xl mx-auto px-4" },
+                    currentStep > 0 && React.createElement('div', { className: "mb-8" },
+                        React.createElement('div', { className: "flex items-center justify-between text-sm text-gray-600 mb-3" },
+                            React.createElement('span', null, `Question ${Math.min(currentStep + 1, questions.length)} of ${questions.length}`),
+                            React.createElement('span', null, `${Math.round(getProgress())}% Complete`)
+                        ),
+                        
+                        currentStep >= questions.length ? 
+                            React.createElement('div', { className: "grid grid-cols-4 gap-2" },
+                                getSectionProgress().map((section, index) =>
+                                    React.createElement('div', { key: index, className: "space-y-1" },
+                                        React.createElement('div', { className: "text-xs text-center font-medium text-green-600" }, "100%"),
+                                        React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
+                                            React.createElement('div', { className: "bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full w-full" })
+                                        )
+                                    )
+                                )
+                            ) :
+                            React.createElement('div', { className: "grid grid-cols-4 gap-2" },
+                                getSectionProgress().map((section, index) =>
+                                    React.createElement('div', { key: index, className: "space-y-1" },
+                                        React.createElement('div', { 
+                                            className: `text-xs text-center font-medium ${section.isActive ? 'text-blue-600' : section.isComplete ? 'text-green-600' : 'text-gray-400'}` 
+                                        }, `${Math.round(section.progress)}%`),
+                                        React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
+                                            React.createElement('div', {
+                                                className: `h-2 rounded-full transition-all duration-500 ${
+                                                    section.isComplete 
+                                                        ? 'bg-gradient-to-r from-green-500 to-green-600' 
+                                                        : section.isActive 
+                                                            ? 'bg-gradient-to-r from-blue-500 to-purple-600' 
+                                                            : 'bg-gray-300'
+                                                }`,
+                                                style: { width: `${section.progress}%` }
+                                            })
+                                        )
+                                    )
+                                )
+                            )
+                    ),
+
+                    React.createElement('div', { className: "mb-8" },
+                        React.createElement('div', { className: "flex items-center space-x-3 mb-2" },
+                            React.createElement('div', { className: `w-10 h-10 rounded-full flex items-center justify-center ${getSectionColor(currentSection)}` },
+                                React.createElement(getSectionIcon(currentSection), { className: "w-5 h-5 text-white" })
+                            ),
+                            React.createElement('h2', { className: "text-lg font-semibold text-gray-700" }, currentSection)
+                        )
+                    ),
+
+                    React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-8 mb-8 min-h-[400px] flex flex-col justify-center" },
+                        showSectionComplete ? renderSectionComplete() : renderQuestion()
+                    ),
+
+                    !showSectionComplete && React.createElement('div', { className: "flex justify-between items-center" },
+                        currentStep === 0 ? 
+                            React.createElement('div', { className: "w-full flex justify-center" },
+                                React.createElement('button', {
+                                    onClick: nextStep,
+                                    className: "flex items-center space-x-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all text-lg"
+                                },
+                                    React.createElement('span', null, "Let's Get Started"),
+                                    React.createElement(ChevronRight, { className: "w-5 h-5" })
+                                )
+                            ) :
+                            React.createElement(React.Fragment, null,
+                                React.createElement('button', {
+                                    onClick: prevStep,
+                                    disabled: currentStep === 0,
+                                    className: `flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                                        currentStep === 0
+                                            ? 'text-gray-400 cursor-not-allowed'
+                                            : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                                    }`
+                                },
+                                    React.createElement(ChevronLeft, { className: "w-5 h-5" }),
+                                    React.createElement('span', null, "Previous")
+                                ),
+                                currentStep < questions.length && 
+                                    React.createElement('button', {
+                                        onClick: nextStep,
+                                        disabled: !isAnswered(),
+                                        className: `flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                                            isAnswered()
+                                                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                        }`
+                                    },
+                                        React.createElement('span', null, currentStep === questions.length - 1 ? 'Get My Results' : 'Next'),
+                                        React.createElement(ChevronRight, { className: "w-5 h-5" })
+                                    )
+                            )
+                    )
+                )
+            );
+        };
+
+        // Google Maps already initialized at page head
+
+        // Initialize Google Maps for opticians when the component mounts
+        window.initOpticiansMap = function() {
+            const mapElement = document.getElementById('opticians-map');
+            if (!mapElement || !window.google) return;
+
+            const madrid = { lat: 40.4168, lng: -3.7038 };
+            
+            const map = new google.maps.Map(mapElement, {
+                zoom: 14,
+                center: madrid,
+                styles: [
+                    {
+                        featureType: "poi",
+                        elementType: "labels",
+                        stylers: [{ visibility: "off" }]
+                    }
+                ]
+            });
+
+            const stores = [
+                { name: "Optica Nova", position: { lat: 40.4168, lng: -3.7038 }, color: "red" },
+                { name: "CentroVisión", position: { lat: 40.4155, lng: -3.7074 }, color: "blue" },
+                { name: "Óptica Bassol", position: { lat: 40.4378, lng: -3.6888 }, color: "green" }
+            ];
+
+            stores.forEach((store, index) => {
+                const marker = new google.maps.Marker({
+                    position: store.position,
+                    map: map,
+                    title: store.name,
+                    label: {
+                        text: String(index + 1),
+                        color: "white",
+                        fontWeight: "bold"
+                    },
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        fillColor: store.color === "red" ? "#ef4444" : store.color === "blue" ? "#3b82f6" : "#22c55e",
+                        fillOpacity: 1,
+                        strokeColor: "white",
+                        strokeWeight: 2,
+                        scale: 12
+                    }
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<div class="p-2">
+                        <h3 class="font-bold text-gray-800">${store.name}</h3>
+                        <p class="text-sm text-gray-600">Click for directions</p>
+                    </div>`
+                });
+
+                marker.addListener('click', () => {
+                    infoWindow.open(map, marker);
+                });
+            });
+        };
+
+        // Check if map should be initialized periodically
+        const checkForMap = setInterval(() => {
+            if (document.getElementById('opticians-map') && window.google) {
+                window.initOpticiansMap();
+                clearInterval(checkForMap);
+            }
+        }, 1000);
+
+        ReactDOM.render(React.createElement(GlassesFinderWizard), document.getElementById('root'));
+    </script>
+</body>
+</html> 
