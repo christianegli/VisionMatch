@@ -258,22 +258,21 @@
                         setAiInsights(generatePersonalizedFallback());
                         setIsGeneratingInsights(false);
                     }, 500);
-                }, 4000); // Faster timeout for better UX
+                }, 8000); // Increased timeout for retries
                 
-                try {
-                    console.log("🤖 Starting Gemini AI analysis...");
-                    console.log("User answers:", answers);
-                    
-                    // Correct Gemini API endpoint and format
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyBwPLk8BhFMmAMWSAlKC3DOgPMNqL6BJXA`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            contents: [{
-                                parts: [{
-                                    text: `You're a friendly vision expert helping someone find the perfect glasses for their lifestyle. Based on their questionnaire, give personalized, practical advice.
+                const tryGeminiAPI = async (model, retryCount = 0) => {
+                    try {
+                        console.log(`🤖 Trying ${model} (attempt ${retryCount + 1})...`);
+                        
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=AIzaSyBwPLk8BhFMmAMWSAlKC3DOgPMNqL6BJXA`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                contents: [{
+                                    parts: [{
+                                        text: `You're a friendly vision expert helping someone find the perfect glasses for their lifestyle. Based on their questionnaire, give personalized, practical advice.
 
 Their answers: ${JSON.stringify(answers, null, 2)}
 
@@ -311,42 +310,69 @@ Structure your response like this:
 **Activity-Specific Tips:** [Based on their activities text, give 2-3 specific tips for their hobbies/work]
 
 CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary recommendations based on their actual answers. Make it personal and specific. ALWAYS EXACTLY 3 GLASSES.`
+                                    }]
                                 }]
-                            }]
-                        })
-                    });
-                    
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) {
-                        console.log(`❌ Gemini API failed: ${response.status} - ${response.statusText}`);
-                        console.log("Response headers:", [...response.headers.entries()]);
+                            })
+                        });
                         
-                        // Try to get more details about the error
-                        const errorText = await response.text();
-                        console.log("Error response body:", errorText);
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`${response.status}: ${errorText}`);
+                        }
                         
-                        throw new Error(`API request failed: ${response.status} - ${errorText}`);
+                        const data = await response.json();
+                        console.log(`✅ ${model} success!`, data);
+                        
+                        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
+                            return data.candidates[0].content.parts[0].text;
+                        } else {
+                            throw new Error('Invalid response format');
+                        }
+                        
+                    } catch (error) {
+                        console.log(`❌ ${model} failed (attempt ${retryCount + 1}):`, error.message);
+                        
+                        // If it's a 503 overload error and we have retries left
+                        if (error.message.includes('503') && retryCount < 2) {
+                            const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff: 1s, 2s, 4s
+                            console.log(`⏳ Retrying ${model} in ${delay}ms...`);
+                            await new Promise(resolve => setTimeout(resolve, delay));
+                            return tryGeminiAPI(model, retryCount + 1);
+                        }
+                        
+                        throw error;
+                    }
+                };
+                
+                try {
+                    console.log("🤖 Starting Gemini AI analysis...");
+                    console.log("User answers:", answers);
+                    
+                    let result;
+                    
+                    // Try Flash model first (faster)
+                    try {
+                        result = await tryGeminiAPI('gemini-1.5-flash');
+                    } catch (flashError) {
+                        console.log("🔄 Flash model failed, trying Pro model...");
+                        // Fallback to Pro model if Flash is overloaded
+                        result = await tryGeminiAPI('gemini-1.5-pro');
                     }
                     
-                    const data = await response.json();
-                    console.log("✅ Gemini API success!", data);
+                    clearTimeout(timeoutId);
+                    clearInterval(progressInterval);
                     setLoadingProgress(100);
                     
                     setTimeout(() => {
-                        if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
-                            setAiInsights(data.candidates[0].content.parts[0].text);
-                            console.log("🎉 Real AI insights from Gemini!");
-                        } else {
-                            console.log("⚠️ Unexpected Gemini response format:", data);
-                            setAiInsights(generatePersonalizedFallback());
-                        }
+                        setAiInsights(result);
                         setIsGeneratingInsights(false);
+                        console.log("🎉 Real AI insights generated!");
                     }, 500);
                     
                 } catch (error) {
                     clearTimeout(timeoutId);
-                    console.log("🔄 Gemini failed, using intelligent fallback:", error.message);
+                    clearInterval(progressInterval);
+                    console.log("🔄 Both AI models failed, using intelligent fallback:", error.message);
                     setLoadingProgress(100);
                     
                     setTimeout(() => {
