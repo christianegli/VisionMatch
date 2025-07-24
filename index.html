@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glasses Finder - OptiQa</title>
+    <title>VisionMatch</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -90,7 +90,7 @@
             const questions = [
                 {
                     type: 'intro',
-                    section: "Let's Get Started",
+                    section: "VisionMatch",
                     title: "Let's match your glasses with your lifestyle",
                     subtitle: "Answer a few quick questions to discover which types of glasses actually fit your day-to-day life.",
                     note: "(Takes 2 minutes – and you might learn something useful about your vision!)"
@@ -277,20 +277,40 @@
 
 Their answers: ${JSON.stringify(answers, null, 2)}
 
-Provide exactly 3 glasses recommendations in this warm, helpful format:
+ANALYSIS FRAMEWORK:
+1. Screen Time Analysis: Look at hours per day, eye strain symptoms, work type
+2. Activity Analysis: Parse their specific activities text and lifestyle needs  
+3. Current Setup Analysis: What they have vs satisfaction level vs needs
+4. Vision Type Analysis: Progressive vs single vision impacts recommendations
+5. Lifestyle Gaps: What's missing from their current setup
 
-**What I noticed about your vision needs:** [1-2 sentences about their main challenges based on their answers]
+RECOMMENDATION RULES:
+- 5+ hours screen time + eye strain = dedicated computer glasses recommended
+- Sports activities mentioned = sports glasses (be specific to their sport)
+- Progressive lenses + lots of reading = separate reading glasses for comfort
+- Driving issues = specialized driving glasses with anti-glare
+- Outdoor activities = prescription sunglasses essential
+- "Avoid wearing glasses" = contact lens alternative or sports glasses
+- Unhappy with current setup = identify specific problems and solutions
 
-**Here's what would work best for you:**
-• **For daily life:** [Focus on their main activities and comfort needs, no specific brands]
-• **For ${answers[14] || 'your activities'}:** [Match their specific hobby/sport/lifestyle mentioned]
-• **As a backup:** [Practical third option for convenience/specific situations]
+MANDATORY: You MUST recommend exactly 3 pairs of glasses. No more, no less. Always 3 pairs.
 
-**Why this makes sense:** [Brief explanation of how these solve their specific problems]
+Make sure that your output is a digestible recommendation for the end consumer. Dont include your thought process. If a user skips a question, dont specifically mention that, but interpret what it might mean or ignore that part.
 
-**Quick tips for you:** [2-3 short, actionable tips based on their lifestyle]
+Structure your response like this:
 
-Keep it conversational, avoid technical jargon, and focus on how each recommendation improves their daily experience. Dont include your thought process. If a user skips a question, dont specifically mention that, but interpret what it might mean or ignore that part.`
+**Your Vision Analysis:** [2 sentences: their main challenges and lifestyle demands based on actual answers]
+
+**Recommended Eyewear System:** (Exactly 3 glasses required)
+• [Primary glasses - be specific about lens type, coatings, frame style for their main need]
+• [Secondary glasses - match to their specific secondary activity/need]
+• [Third glasses - always provide a third recommendation, could be backup, specialized, or complementary pair]
+
+**Why This Setup:** [Explain how each recommendation solves specific problems they mentioned]
+
+**Activity-Specific Tips:** [Based on their activities text, give 2-3 specific tips for their hobbies/work]
+
+CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary recommendations based on their actual answers. Make it personal and specific. ALWAYS EXACTLY 3 GLASSES.`
                                 }]
                             }]
                         })
