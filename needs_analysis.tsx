@@ -876,7 +876,10 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 💡 The more specific you are, the better we can tailor your recommendations!
               </p>
               <button
-                onClick={() => updateAnswer(currentStep, 'skipped')}
+                onClick={() => {
+                  updateAnswer(currentStep, 'skipped');
+                  nextStep();
+                }}
                 className="inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
               >
                 <span>Skip this question</span>

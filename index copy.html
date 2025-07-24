@@ -878,7 +878,10 @@ Keep it conversational, avoid technical jargon, and focus on how each recommenda
                                     "💡 The more specific you are, the better we can tailor your recommendations!"
                                 ),
                                 React.createElement('button', {
-                                    onClick: () => updateAnswer(currentStep, 'skipped'),
+                                    onClick: () => {
+                                        updateAnswer(currentStep, 'skipped');
+                                        nextStep();
+                                    },
                                     className: "inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
                                 },
                                     React.createElement('span', null, "Skip this question"),

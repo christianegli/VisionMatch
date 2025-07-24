@@ -18,7 +18,7 @@ const GlassesFinderWizard = () => {
   const questions = [
     {
       type: 'intro',
-      section: "Let's Get Started",
+      section: "VisionMatch",
       title: "Let's match your glasses with your lifestyle",
       subtitle: "Answer a few quick questions to discover which types of glasses actually fit your day-to-day life.",
       note: "(Takes 2 minutes – and you might learn something useful about your vision!)"
@@ -50,7 +50,7 @@ const GlassesFinderWizard = () => {
     {
       type: 'multiple',
       section: "Your Current Setup",
-      question: "Do you prefer specific brands or styles?",
+      question: "Which brands do you like?",
       options: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "I go for comfort over brands", "Not sure / no preference"]
     },
     {
@@ -878,7 +878,10 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 💡 The more specific you are, the better we can tailor your recommendations!
               </p>
               <button
-                onClick={() => updateAnswer(currentStep, 'skipped')}
+                onClick={() => {
+                  updateAnswer(currentStep, 'skipped');
+                  nextStep();
+                }}
                 className="inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
               >
                 <span>Skip this question</span>
