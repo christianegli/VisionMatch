@@ -976,7 +976,17 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     updateAnswer(newStep, 'skipped'); // Log skipped for AI if needed
                     newStep++;
                 }
-                if (newStep > 1 && newStep < questions.length && checkSectionCompletion(newStep)) {
+                // Check if we're finishing the entire questionnaire
+                if (newStep === questions.length) {
+                    setCurrentStep(newStep);
+                    setTimeout(() => {
+                        generateAIInsights();
+                    }, 100);
+                    return;
+                }
+                
+                // Only show section completion for intermediate sections (not the final one)
+                if (newStep > 1 && checkSectionCompletion(newStep)) {
                     const completedSection = questions[currentStep].section;
                     const sectionData = getSectionInsights(completedSection, answers);
                     setCompletedSectionData(sectionData);
@@ -984,14 +994,9 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     // Wait for user to click continue - no automatic timeout
                     return;
                 }
-                if (newStep === questions.length) {
-                    setCurrentStep(newStep);
-                    setTimeout(() => {
-                        generateAIInsights();
-                    }, 100);
-                } else {
-                    setCurrentStep(newStep);
-                }
+                
+                // Continue to next question
+                setCurrentStep(newStep);
             };
 
             const prevStep = () => {
