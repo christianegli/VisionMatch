@@ -823,10 +823,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                         return questionIndex !== -1 ? answers[questionIndex] : null;
                     };
                     
-                    // Debug logging to see what answers we have
-                    console.log('🐛 Debug - Section:', section);
-                    console.log('🐛 Debug - All answers:', answers);
-                    console.log('🐛 Debug - Current step:', currentStep);
+                    // Dynamic insights based on user responses
                     
                     switch(section) {
                         case "Your Current Setup":
@@ -836,10 +833,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             const satisfaction = findAnswerByQuestion('Are you happy with your current setup?');
                             const glassesUse = findAnswerByQuestion('What do you mostly use your glasses for?') || [];
                             
-                            console.log('🐛 Debug - wearsGlasses:', wearsGlasses);
-                            console.log('🐛 Debug - glassesCount:', glassesCount);
-                            console.log('🐛 Debug - satisfaction:', satisfaction);
-                            console.log('🐛 Debug - glassesUse:', glassesUse);
+
                             
                             if (!wearsGlasses || (!wearsGlasses.includes('glasses') && !wearsGlasses.includes('both'))) {
                                 return "💡 Most people wait too long to get their first glasses - early intervention prevents eye strain!";
@@ -861,10 +855,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             const lensType = findAnswerByQuestion('What type of lenses do you have today?');
                             const lensUpdated = findAnswerByQuestion('Have your lenses been updated in the past 2 years?');
                             
-                            console.log('🐛 Debug - screenTime:', screenTime);
-                            console.log('🐛 Debug - symptoms:', symptoms);
-                            console.log('🐛 Debug - lensType:', lensType);
-                            console.log('🐛 Debug - lensUpdated:', lensUpdated);
+
                             
                             if (screenTime === "More than 8 hours" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
                                 return "💻 Your 8+ hour screen time + eye strain combo is shared by 78% of professionals - blue light filtering helps!";
@@ -889,10 +880,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             const avoidGlasses = findAnswerByQuestion('Do you ever avoid wearing glasses because they get in the way?');
                             const activities = findAnswerByQuestion('Tell us about your specific activities and hobbies');
                             
-                            console.log('🐛 Debug - freeTime:', freeTime);
-                            console.log('🐛 Debug - drivingIssues:', drivingIssues);
-                            console.log('🐛 Debug - avoidGlasses:', avoidGlasses);
-                            console.log('🐛 Debug - activities:', activities);
+
                             
                             if (Array.isArray(freeTime) && freeTime.includes("Exercise or play sports") && avoidGlasses === "Yes") {
                                 return "🏃‍♂️ Athletes who avoid glasses miss 25% performance gains - sport-specific eyewear is a game-changer!";
@@ -915,8 +903,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             const prescriptionSunglasses = findAnswerByQuestion('Do you wear sunglasses with prescription?');
                             const stylePreference = findAnswerByQuestion('What is important for you in glasses?');
                             
-                            console.log('🐛 Debug - prescriptionSunglasses:', prescriptionSunglasses);
-                            console.log('🐛 Debug - stylePreference:', stylePreference);
+
                             
                             if (prescriptionSunglasses === "No, but I'd like to") {
                                 return "🕶️ Prescription sunglasses users report 90% better outdoor vision than contacts + regular sunglasses!";
