@@ -930,6 +930,16 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 return currentQuestion.section !== nextQuestion.section;
             };
 
+            const continueAfterInsights = () => {
+                setShowSectionComplete(false);
+                let newStep = currentStep + 1;
+                while (newStep < questions.length && questions[newStep].conditional && !questions[newStep].conditional(answers)) {
+                    updateAnswer(newStep, 'skipped'); // Log skipped for AI if needed
+                    newStep++;
+                }
+                setCurrentStep(newStep);
+            };
+
             const nextStep = async () => {
                 setShowAllBrands(false); // Reset brand expansion when moving to next question
                 let newStep = currentStep + 1;
@@ -942,10 +952,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     const sectionData = getSectionInsights(completedSection, answers);
                     setCompletedSectionData(sectionData);
                     setShowSectionComplete(true);
-                    setTimeout(() => {
-                        setShowSectionComplete(false);
-                        setCurrentStep(newStep);
-                    }, 1500);
+                    // Wait for user to click continue - no automatic timeout
                     return;
                 }
                 if (newStep === questions.length) {
@@ -993,11 +1000,10 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                         React.createElement('p', { className: "text-lg text-gray-600 max-w-md mx-auto" }, completedSectionData.insight)
                     ),
                     
-                    React.createElement('div', { className: "flex items-center justify-center space-x-2 text-green-600" },
-                        React.createElement('div', { className: "w-2 h-2 bg-green-500 rounded-full animate-ping" }),
-                        React.createElement('span', { className: "text-sm font-medium" }, "Moving to next section..."),
-                        React.createElement('div', { className: "w-2 h-2 bg-green-500 rounded-full animate-ping" })
-                    )
+                    React.createElement('button', { 
+                        className: "optiqa-button bg-gradient-to-r from-optiqa-blue to-optiqa-navy text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 mt-4",
+                        onClick: continueAfterInsights
+                    }, "Continue →")
                 );
             };
 
