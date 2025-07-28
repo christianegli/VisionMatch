@@ -817,6 +817,11 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionInsights = (sectionName, answers) => {
                 const generateDynamicInsight = (section) => {
+                    // Debug logging to see what answers we have
+                    console.log('🐛 Debug - Section:', section);
+                    console.log('🐛 Debug - All answers:', answers);
+                    console.log('🐛 Debug - Current step:', currentStep);
+                    
                     switch(section) {
                         case "Your Current Setup":
                             // Check for glasses wearing patterns
@@ -829,7 +834,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                 return "💡 Most people wait too long to get their first glasses - early intervention prevents eye strain!";
                             }
                             if (glassesCount === "Just one" && glassesUse.length >= 3) {
-                                return "🎯 You're using one pair for 3+ activities - specialized glasses could boost your comfort by 60%!";
+                                return "💡 You're using one pair for 3+ activities - specialized glasses could boost your comfort by 60%!";
                             }
                             if (satisfaction && satisfaction.includes("Not at all")) {
                                 return "✨ Your dissatisfaction is fixable! 89% of unhappy glasses wearers find their perfect setup within 3 pairs.";
@@ -875,7 +880,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                 return "🚗 Night driving issues affect 60% of drivers - anti-glare coating eliminates most problems instantly.";
                             }
                             if (activities && activities.length > 50) {
-                                return "🎯 Your diverse activities need diverse visual solutions - most people underestimate this need!";
+                                return "💡 Your diverse activities need diverse visual solutions - most people underestimate this need!";
                             }
                             if (freeTime.includes("Read/watch shows") && freeTime.includes("Create (music, art, crafts)")) {
                                 return "🎨 Creative + reading activities need different focal distances - separate glasses optimize both perfectly.";
@@ -883,7 +888,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             if (freeTime.includes("Travel")) {
                                 return "✈️ Frequent travelers benefit from lightweight, durable frames with photochromic lenses for adaptability.";
                             }
-                            return "🎪 Your lifestyle variety means you'd benefit from activity-specific glasses rather than one compromise pair.";
+                            return "💡 Your lifestyle variety means you'd benefit from activity-specific glasses rather than one compromise pair.";
                             
                         case "Sun, Style & Self-Expression":
                             const prescriptionSunglasses = answers[15];
@@ -904,7 +909,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             return "🎭 Perfect! We now have everything needed to match your style preferences with optimal vision solutions.";
                             
                         default:
-                            return "🎯 Great progress! Each answer helps us create your perfect vision solution.";
+                            return "💡 Great progress! Each answer helps us create your perfect vision solution.";
                     }
                 };
 
