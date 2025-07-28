@@ -817,6 +817,12 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionInsights = (sectionName, answers) => {
                 const generateDynamicInsight = (section) => {
+                    // Helper function to find answer by question text
+                    const findAnswerByQuestion = (questionText) => {
+                        const questionIndex = questions.findIndex(q => q.question && q.question.includes(questionText));
+                        return questionIndex !== -1 ? answers[questionIndex] : null;
+                    };
+                    
                     // Debug logging to see what answers we have
                     console.log('🐛 Debug - Section:', section);
                     console.log('🐛 Debug - All answers:', answers);
@@ -824,56 +830,71 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     
                     switch(section) {
                         case "Your Current Setup":
-                            // Check for glasses wearing patterns
-                            const wearsGlasses = answers[1] && answers[1].includes('glasses');
-                            const glassesCount = answers[2];
-                            const satisfaction = answers[4];
-                            const glassesUse = answers[3] || [];
+                            // Find answers by question content instead of hardcoded indices
+                            const wearsGlasses = findAnswerByQuestion('Do you currently wear glasses or lenses?');
+                            const glassesCount = findAnswerByQuestion('How many pairs of glasses do you regularly use?');
+                            const satisfaction = findAnswerByQuestion('Are you happy with your current setup?');
+                            const glassesUse = findAnswerByQuestion('What do you mostly use your glasses for?') || [];
                             
-                            if (!wearsGlasses) {
+                            console.log('🐛 Debug - wearsGlasses:', wearsGlasses);
+                            console.log('🐛 Debug - glassesCount:', glassesCount);
+                            console.log('🐛 Debug - satisfaction:', satisfaction);
+                            console.log('🐛 Debug - glassesUse:', glassesUse);
+                            
+                            if (!wearsGlasses || (!wearsGlasses.includes('glasses') && !wearsGlasses.includes('both'))) {
                                 return "💡 Most people wait too long to get their first glasses - early intervention prevents eye strain!";
                             }
-                            if (glassesCount === "Just one" && glassesUse.length >= 3) {
+                            if (glassesCount === "Just one" && Array.isArray(glassesUse) && glassesUse.length >= 3) {
                                 return "💡 You're using one pair for 3+ activities - specialized glasses could boost your comfort by 60%!";
                             }
                             if (satisfaction && satisfaction.includes("Not at all")) {
                                 return "✨ Your dissatisfaction is fixable! 89% of unhappy glasses wearers find their perfect setup within 3 pairs.";
                             }
-                            if (glassesUse.includes("Screen/office work") && glassesUse.includes("Driving")) {
+                            if (Array.isArray(glassesUse) && glassesUse.includes("Screen/office work") && glassesUse.includes("Driving")) {
                                 return "🖥️ Screen + driving users see 40% less eye fatigue with task-specific glasses for each activity.";
                             }
                             return "👓 Most successful glasses wearers have 2-3 specialized pairs rather than one 'do-everything' pair.";
                             
                         case "Lens Comfort & Eye Experience":
-                            const screenTime = answers[10];
-                            const symptoms = answers[8] || [];
-                            const lensType = answers[9];
-                            const lensUpdated = answers[7];
+                            const screenTime = findAnswerByQuestion('How many hours per day are you in front of a screen?');
+                            const symptoms = findAnswerByQuestion('Do you ever experience any of the following?') || [];
+                            const lensType = findAnswerByQuestion('What type of lenses do you have today?');
+                            const lensUpdated = findAnswerByQuestion('Have your lenses been updated in the past 2 years?');
                             
-                            if (screenTime === "More than 8 hours" && symptoms.includes("Eye strain at screen")) {
+                            console.log('🐛 Debug - screenTime:', screenTime);
+                            console.log('🐛 Debug - symptoms:', symptoms);
+                            console.log('🐛 Debug - lensType:', lensType);
+                            console.log('🐛 Debug - lensUpdated:', lensUpdated);
+                            
+                            if (screenTime === "More than 8 hours" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
                                 return "💻 Your 8+ hour screen time + eye strain combo is shared by 78% of professionals - blue light filtering helps!";
                             }
-                            if (symptoms.includes("Headaches") && symptoms.includes("Tired eyes")) {
+                            if (Array.isArray(symptoms) && symptoms.includes("Headaches") && symptoms.includes("Tired eyes")) {
                                 return "🧠 Headaches + tired eyes usually mean your prescription needs updating or you need computer glasses.";
                             }
-                            if (lensType === "Progressive (multifocal)" && symptoms.includes("Eye strain at screen")) {
+                            if (lensType === "Progressive (multifocal)" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
                                 return "📖 Progressive lens users often need separate computer glasses - the intermediate zone isn't optimal for screens.";
                             }
-                            if (lensUpdated === "No" && symptoms.length >= 2) {
+                            if (lensUpdated === "No" && Array.isArray(symptoms) && symptoms.length >= 2) {
                                 return "🔄 Outdated prescriptions cause 70% of the symptoms you're experiencing - time for an update!";
                             }
-                            if (symptoms.includes("None of these")) {
+                            if (Array.isArray(symptoms) && symptoms.includes("None of these")) {
                                 return "🌟 No vision symptoms is rare! You're likely already optimized or need minor tweaks for perfection.";
                             }
                             return "👁️ Your symptom pattern suggests specific lens technologies could eliminate 85% of your discomfort.";
                             
                         case "Lifestyle & Vision Needs":
-                            const freeTime = answers[12] || [];
-                            const drivingIssues = answers[11];
-                            const avoidGlasses = answers[13];
-                            const activities = answers[14];
+                            const freeTime = findAnswerByQuestion('What do you usually do in your free time?') || [];
+                            const drivingIssues = findAnswerByQuestion('Do you have issues with your current glasses while driving?');
+                            const avoidGlasses = findAnswerByQuestion('Do you ever avoid wearing glasses because they get in the way?');
+                            const activities = findAnswerByQuestion('Tell us about your specific activities and hobbies');
                             
-                            if (freeTime.includes("Exercise or play sports") && avoidGlasses === "Yes") {
+                            console.log('🐛 Debug - freeTime:', freeTime);
+                            console.log('🐛 Debug - drivingIssues:', drivingIssues);
+                            console.log('🐛 Debug - avoidGlasses:', avoidGlasses);
+                            console.log('🐛 Debug - activities:', activities);
+                            
+                            if (Array.isArray(freeTime) && freeTime.includes("Exercise or play sports") && avoidGlasses === "Yes") {
                                 return "🏃‍♂️ Athletes who avoid glasses miss 25% performance gains - sport-specific eyewear is a game-changer!";
                             }
                             if (drivingIssues && drivingIssues.includes("Yes, but only at night")) {
@@ -882,17 +903,20 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             if (activities && activities.length > 50) {
                                 return "💡 Your diverse activities need diverse visual solutions - most people underestimate this need!";
                             }
-                            if (freeTime.includes("Read/watch shows") && freeTime.includes("Create (music, art, crafts)")) {
+                            if (Array.isArray(freeTime) && freeTime.includes("Read/watch shows") && freeTime.includes("Create (music, art, crafts)")) {
                                 return "🎨 Creative + reading activities need different focal distances - separate glasses optimize both perfectly.";
                             }
-                            if (freeTime.includes("Travel")) {
+                            if (Array.isArray(freeTime) && freeTime.includes("Travel")) {
                                 return "✈️ Frequent travelers benefit from lightweight, durable frames with photochromic lenses for adaptability.";
                             }
                             return "💡 Your lifestyle variety means you'd benefit from activity-specific glasses rather than one compromise pair.";
                             
                         case "Sun, Style & Self-Expression":
-                            const prescriptionSunglasses = answers[15];
-                            const stylePreference = answers[16];
+                            const prescriptionSunglasses = findAnswerByQuestion('Do you wear sunglasses with prescription?');
+                            const stylePreference = findAnswerByQuestion('What is important for you in glasses?');
+                            
+                            console.log('🐛 Debug - prescriptionSunglasses:', prescriptionSunglasses);
+                            console.log('🐛 Debug - stylePreference:', stylePreference);
                             
                             if (prescriptionSunglasses === "No, but I'd like to") {
                                 return "🕶️ Prescription sunglasses users report 90% better outdoor vision than contacts + regular sunglasses!";
