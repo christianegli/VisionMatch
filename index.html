@@ -3,11 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VisionMatch</title>
+    <title>VisionMatch by OptiQa - Professional Vision Assessment</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configure Tailwind with OptiQa brand colors
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'optiqa-blue': '#0066CC',
+                        'optiqa-navy': '#1a365d',
+                        'optiqa-light': '#f7fafc',
+                        'optiqa-gray': '#4a5568',
+                        'optiqa-accent': '#4c51bf'
+                    },
+                    fontFamily: {
+                        'optiqa': ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         // Define initMap globally before Google Maps loads
         window.initMap = function() {
@@ -16,62 +36,66 @@
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwPLk8BhFMmAMWSAlKC3DOgPMNqL6BJXA&callback=initMap&libraries=places"></script>
     <style>
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-                'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-                sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        @keyframes zoom-once {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-        }
-        .pulse-once {
-            animation: zoom-once 0.8s ease-in-out 1;
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
         
-        input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            border: 3px solid #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        .optiqa-gradient {
+            background: linear-gradient(135deg, #0066CC 0%, #4c51bf 100%);
         }
         
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #3b82f6;
-            cursor: pointer;
-            border: 3px solid #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            appearance: none;
+        .optiqa-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0, 102, 204, 0.08);
+            border: 1px solid rgba(0, 102, 204, 0.1);
+        }
+        
+        .optiqa-button {
+            background: linear-gradient(135deg, #0066CC 0%, #4c51bf 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.2);
+        }
+        
+        .optiqa-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #0066CC 0%, #4c51bf 100%);
+            border-radius: 8px;
+        }
+        
+        .optiqa-brand {
+            background: linear-gradient(135deg, #0066CC 0%, #4c51bf 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
     </style>
 </head>
-<body>
+
+<body class="bg-gray-50 font-optiqa">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState } = React;
         
-        // Complete SVG icon components
+        // SVG icon components with OptiQa styling
         const ChevronRight = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'm9 18 6-6-6-6' }));
         const ChevronLeft = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'm15 18-6-6 6-6' }));
         const Eye = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z' }), React.createElement('circle', { cx: 12, cy: 12, r: 3 }));
         const Glasses = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('circle', { cx: 6, cy: 15, r: 4 }), React.createElement('circle', { cx: 18, cy: 15, r: 4 }), React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'm6 11-2-2 1.5-1.5a2 2 0 0 1 1.414-.586H8.5m6 0h1.586a2 2 0 0 1 1.414.586L19 9l-2 2M10 15h4' }));
         const Sun = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('circle', { cx: 12, cy: 12, r: 4 }), React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 6.34l-1.41-1.41M19.07 19.07l-1.41-1.41' }));
-        const Sparkles = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.091zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456z' }));
-        const MapPin = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z' }), React.createElement('circle', { cx: 12, cy: 10, r: 3 }));
+        const Sparkles = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z' }));
+        const MapPin = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' }), React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M15 11a3 3 0 11-6 0 3 3 0 016 0z' }));
         const Clock = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('circle', { cx: 12, cy: 12, r: 10 }), React.createElement('polyline', { points: '12,6 12,12 16,14' }));
-        const Phone = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z' }));
+        const Phone = ({ className }) => React.createElement('svg', { className, fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z' }));
 
         const GlassesFinderWizard = () => {
             const [currentStep, setCurrentStep] = useState(0);
@@ -90,10 +114,10 @@
             const questions = [
                 {
                     type: 'intro',
-                    section: "VisionMatch",
-                    title: "Let's match your glasses with your lifestyle",
-                    subtitle: "Answer a few quick questions to discover which types of glasses actually fit your day-to-day life.",
-                    note: "(Takes 2 minutes – and you might learn something useful about your vision!)"
+                    section: "Professional Vision Assessment",
+                    title: "VisionMatch by OptiQa",
+                    subtitle: "A comprehensive vision assessment to determine your optimal eyewear solution based on your lifestyle and visual needs.",
+                    note: "Professional optical analysis • Takes 2-3 minutes • Personalized recommendations"
                 },
                 {
                     type: 'single',
@@ -736,12 +760,12 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionColor = (section) => {
                 switch (section) {
-                    case "Let's Get Started": return "bg-blue-500";
-                    case "Your Current Setup": return "bg-blue-500";
-                    case "Lens Comfort & Eye Experience": return "bg-yellow-500";
-                    case "Lifestyle & Vision Needs": return "bg-green-500";
-                    case "Sun, Style & Self-Expression": return "bg-red-500";
-                    default: return "bg-purple-500";
+                    case "Professional Vision Assessment": return "optiqa-gradient";
+                    case "Your Current Setup": return "optiqa-gradient";
+                    case "Lens Comfort & Eye Experience": return "optiqa-gradient";
+                    case "Lifestyle & Vision Needs": return "optiqa-gradient";
+                    case "Sun, Style & Self-Expression": return "optiqa-gradient";
+                    default: return "optiqa-gradient";
                 }
             };
 
@@ -869,13 +893,20 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 }
 
                 if (q.type === 'intro') {
-                    return React.createElement('div', { className: "text-center space-y-6" },
-                        React.createElement('div', { className: "w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6" },
-                            React.createElement(Glasses, { className: "w-10 h-10 text-white" })
+                    return React.createElement('div', { className: "text-center space-y-8" },
+                        React.createElement('div', { className: "w-24 h-24 optiqa-gradient rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg" },
+                            React.createElement(Glasses, { className: "w-12 h-12 text-white" })
                         ),
-                        React.createElement('h2', { className: "text-3xl font-bold text-gray-800" }, q.title),
-                        React.createElement('p', { className: "text-lg text-gray-600 max-w-md mx-auto" }, q.subtitle),
-                        React.createElement('p', { className: "text-sm text-gray-500" }, q.note)
+                        React.createElement('h2', { className: "text-4xl font-bold text-optiqa-navy" }, q.title),
+                        React.createElement('p', { className: "text-xl text-optiqa-gray max-w-lg mx-auto leading-relaxed" }, q.subtitle),
+                        React.createElement('div', { className: "flex items-center justify-center space-x-4 text-sm text-optiqa-blue font-medium" },
+                            q.note.split(' • ').map((item, index) => 
+                                React.createElement('span', { key: index, className: "flex items-center" },
+                                    index > 0 && React.createElement('div', { className: "w-1 h-1 bg-optiqa-blue rounded-full mr-4" }),
+                                    item
+                                )
+                            )
+                        )
                     );
                 }
 
@@ -952,22 +983,22 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             updateAnswer(currentStep, option);
                                         }
                                     },
-                                    className: `w-full p-4 text-left rounded-xl border-2 transition-all duration-200 hover:border-blue-400 hover:bg-blue-50 ${
+                                    className: `w-full p-5 text-left rounded-xl border-2 transition-all duration-200 hover:border-optiqa-blue hover:bg-blue-50 hover:shadow-md ${
                                         q.type === 'multiple'
                                             ? (answers[currentStep] || []).includes(option)
-                                                ? 'border-blue-500 bg-blue-100 text-blue-800'
+                                                ? 'border-optiqa-blue bg-blue-50 text-optiqa-navy shadow-md'
                                                 : 'border-gray-200 bg-white'
                                             : answers[currentStep] === option
-                                                ? 'border-blue-500 bg-blue-100 text-blue-800'
+                                                ? 'border-optiqa-blue bg-blue-50 text-optiqa-navy shadow-md'
                                                 : 'border-gray-200 bg-white'
                                     }`
                                 },
                                     React.createElement('div', { className: "flex items-center justify-between" },
                                         React.createElement('span', { className: "font-medium" }, option),
-                                        q.type === 'multiple' && React.createElement('div', { 
+                                        q.type === 'multiple' &&                                         React.createElement('div', {
                                             className: `w-5 h-5 rounded border-2 flex items-center justify-center ${
                                                 (answers[currentStep] || []).includes(option)
-                                                    ? 'border-blue-500 bg-blue-500'
+                                                    ? 'border-optiqa-blue bg-optiqa-blue'
                                                     : 'border-gray-300'
                                             }`
                                         },
@@ -1097,7 +1128,14 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const currentQuestion = questions[currentStep];
             const currentSection = currentStep >= questions.length ? "Your Personalized Results" : currentQuestion?.section;
 
-            return React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 py-8" },
+            return React.createElement('div', { className: "min-h-screen bg-gray-50 py-12" },
+                // OptiQa Header
+                React.createElement('div', { className: "text-center mb-8" },
+                    React.createElement('div', { className: "max-w-2xl mx-auto px-4" },
+                        React.createElement('h1', { className: "text-3xl font-bold optiqa-brand mb-2" }, "OptiQa"),
+                        React.createElement('p', { className: "text-optiqa-gray text-sm" }, "Professional Vision Assessment")
+                    )
+                ),
                 React.createElement('div', { className: "max-w-2xl mx-auto px-4" },
                     currentStep > 0 && React.createElement('div', { className: "mb-8" },
                         React.createElement('div', { className: "flex items-center justify-between text-sm text-gray-600 mb-3" },
@@ -1111,7 +1149,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                     React.createElement('div', { key: index, className: "space-y-1" },
                                         React.createElement('div', { className: "text-xs text-center font-medium text-green-600" }, "100%"),
                                         React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
-                                            React.createElement('div', { className: "bg-gradient-to-r from-green-500 to-green-600 h-2 rounded-full w-full" })
+                                            React.createElement('div', { className: "progress-bar h-2 rounded-full w-full" })
                                         )
                                     )
                                 )
@@ -1123,16 +1161,16 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             className: `text-xs text-center font-medium ${section.isActive ? 'text-blue-600' : section.isComplete ? 'text-green-600' : 'text-gray-400'}` 
                                         }, `${Math.round(section.progress)}%`),
                                         React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
-                                            React.createElement('div', {
-                                                className: `h-2 rounded-full transition-all duration-500 ${
-                                                    section.isComplete 
-                                                        ? 'bg-gradient-to-r from-green-500 to-green-600' 
-                                                        : section.isActive 
-                                                            ? 'bg-gradient-to-r from-blue-500 to-purple-600' 
-                                                            : 'bg-gray-300'
-                                                }`,
-                                                style: { width: `${section.progress}%` }
-                                            })
+                                                                                    React.createElement('div', {
+                                            className: `h-2 rounded-full transition-all duration-500 ${
+                                                section.isComplete 
+                                                    ? 'progress-bar' 
+                                                    : section.isActive 
+                                                        ? 'progress-bar' 
+                                                        : 'bg-gray-300'
+                                            }`,
+                                            style: { width: `${section.progress}%` }
+                                        })
                                         )
                                     )
                                 )
@@ -1148,29 +1186,29 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                         )
                     ),
 
-                    React.createElement('div', { className: "bg-white rounded-2xl shadow-lg p-8 mb-8 min-h-[400px] flex flex-col justify-center" },
+                    React.createElement('div', { className: "optiqa-card p-8 mb-8 min-h-[400px] flex flex-col justify-center" },
                         showSectionComplete ? renderSectionComplete() : renderQuestion()
                     ),
 
                     !showSectionComplete && React.createElement('div', { className: "flex justify-between items-center" },
                         currentStep === 0 ? 
                             React.createElement('div', { className: "w-full flex justify-center" },
-                                React.createElement('button', {
-                                    onClick: nextStep,
-                                    className: "flex items-center space-x-2 px-8 py-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all text-lg"
-                                },
-                                    React.createElement('span', null, "Let's Get Started"),
-                                    React.createElement(ChevronRight, { className: "w-5 h-5" })
-                                )
+                                                            React.createElement('button', {
+                                onClick: nextStep,
+                                className: "optiqa-button flex items-center space-x-3 px-10 py-5 text-lg font-semibold"
+                            },
+                                React.createElement('span', null, "Begin Assessment"),
+                                React.createElement(ChevronRight, { className: "w-5 h-5" })
+                            )
                             ) :
                             React.createElement(React.Fragment, null,
                                 React.createElement('button', {
                                     onClick: prevStep,
                                     disabled: currentStep === 0,
-                                    className: `flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                                    className: `flex items-center space-x-2 px-8 py-4 rounded-xl font-semibold transition-all ${
                                         currentStep === 0
                                             ? 'text-gray-400 cursor-not-allowed'
-                                            : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+                                            : 'text-optiqa-gray hover:text-optiqa-navy hover:bg-white border border-gray-200'
                                     }`
                                 },
                                     React.createElement(ChevronLeft, { className: "w-5 h-5" }),
@@ -1180,9 +1218,9 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                     React.createElement('button', {
                                         onClick: nextStep,
                                         disabled: !isAnswered(),
-                                        className: `flex items-center space-x-2 px-6 py-3 rounded-xl font-medium transition-all ${
+                                        className: `flex items-center space-x-2 px-8 py-4 rounded-xl font-semibold transition-all ${
                                             isAnswered()
-                                                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                                                ? 'optiqa-button'
                                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                                         }`
                                     },
