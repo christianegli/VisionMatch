@@ -842,10 +842,10 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                 return "💡 You're using one pair for 3+ activities - specialized glasses could boost your comfort by 60%!";
                             }
                             if (satisfaction && satisfaction.includes("Not at all")) {
-                                return "✨ Your dissatisfaction is fixable! 89% of unhappy glasses wearers find their perfect setup within 3 pairs.";
+                                return "✨ Your dissatisfaction is fixable! Most glasses problems can be solved with proper fitting and lens selection.";
                             }
                             if (Array.isArray(glassesUse) && glassesUse.includes("Screen/office work") && glassesUse.includes("Driving")) {
-                                return "🖥️ Screen + driving users see 40% less eye fatigue with task-specific glasses for each activity.";
+                                return "🖥️ Screen work and driving have different visual demands - specialized glasses for each can reduce eye fatigue significantly.";
                             }
                             return "👓 Most successful glasses wearers have 2-3 specialized pairs rather than one 'do-everything' pair.";
                             
@@ -858,21 +858,21 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
                             
                             if (screenTime === "More than 8 hours" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
-                                return "💻 Your 8+ hour screen time + eye strain combo is shared by 78% of professionals - blue light filtering helps!";
+                                return "💻 Heavy screen users like you are among the 32% who experience eye strain - specialized computer glasses can help!";
                             }
                             if (Array.isArray(symptoms) && symptoms.includes("Headaches") && symptoms.includes("Tired eyes")) {
-                                return "🧠 Headaches + tired eyes usually mean your prescription needs updating or you need computer glasses.";
+                                return "🧠 Headaches affect 27% of screen users while tired eyes are very common - often fixable with proper correction!";
                             }
                             if (lensType === "Progressive (multifocal)" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
                                 return "📖 Progressive lens users often need separate computer glasses - the intermediate zone isn't optimal for screens.";
                             }
                             if (lensUpdated === "No" && Array.isArray(symptoms) && symptoms.length >= 2) {
-                                return "🔄 Outdated prescriptions cause 70% of the symptoms you're experiencing - time for an update!";
+                                return "🔄 Outdated prescriptions often cause multiple symptoms like yours - regular updates are essential!";
                             }
                             if (Array.isArray(symptoms) && symptoms.includes("None of these")) {
-                                return "🌟 No vision symptoms is rare! You're likely already optimized or need minor tweaks for perfection.";
+                                return "🌟 No vision symptoms is great! You're among the fortunate few with comfortable screen use.";
                             }
-                            return "👁️ Your symptom pattern suggests specific lens technologies could eliminate 85% of your discomfort.";
+                            return "👁️ Digital eye strain affects about 90% of heavy screen users - specialized solutions can help significantly.";
                             
                         case "Lifestyle & Vision Needs":
                             const freeTime = findAnswerByQuestion('What do you usually do in your free time?') || [];
@@ -883,10 +883,10 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
                             
                             if (Array.isArray(freeTime) && freeTime.includes("Exercise or play sports") && avoidGlasses === "Yes") {
-                                return "🏃‍♂️ Athletes who avoid glasses miss 25% performance gains - sport-specific eyewear is a game-changer!";
+                                return "🏃‍♂️ Sports vision is crucial for performance - about 90 million Americans participate in sports and many need proper eyewear!";
                             }
                             if (drivingIssues && drivingIssues.includes("Yes, but only at night")) {
-                                return "🚗 Night driving issues affect 60% of drivers - anti-glare coating eliminates most problems instantly.";
+                                return "🚗 Over 90% of drivers experience road glare issues - anti-reflective coatings can significantly help with night vision!";
                             }
                             if (activities && activities.length > 50) {
                                 return "💡 Your diverse activities need diverse visual solutions - most people underestimate this need!";
@@ -899,17 +899,17 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             }
                             return "💡 Your lifestyle variety means you'd benefit from activity-specific glasses rather than one compromise pair.";
                             
-                        case "Sun, Style & Self-Expression":
+                                                case "Sun, Style & Self-Expression":
                             const prescriptionSunglasses = findAnswerByQuestion('Do you wear sunglasses with prescription?');
                             const stylePreference = findAnswerByQuestion('What is important for you in glasses?');
                             
-
+ 
                             
                             if (prescriptionSunglasses === "No, but I'd like to") {
-                                return "🕶️ Prescription sunglasses users report 90% better outdoor vision than contacts + regular sunglasses!";
+                                return "🕶️ Prescription sunglasses provide clearer, more comfortable outdoor vision than combining contacts with regular sunglasses!";
                             }
                             if (prescriptionSunglasses === "No") {
-                                return "☀️ Most people don't realize prescription sunglasses can be both stylish AND provide superior vision.";
+                                return "☀️ Most people don't realize prescription sunglasses can be both stylish AND provide superior vision protection.";
                             }
                             if (stylePreference < 30) {
                                 return "💰 Budget-focused buyers often get better value with 2-3 specialized pairs than one expensive 'premium' pair.";
