@@ -1177,7 +1177,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             )
                     ),
 
-                    React.createElement('div', { className: "mb-8" },
+                    currentStep > 0 && React.createElement('div', { className: "mb-8" },
                         React.createElement('div', { className: "flex items-center space-x-3 mb-2" },
                             React.createElement('div', { className: `w-10 h-10 rounded-full flex items-center justify-center ${getSectionColor(currentSection)}` },
                                 React.createElement(getSectionIcon(currentSection), { className: "w-5 h-5 text-white" })
