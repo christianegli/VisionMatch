@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,12 +111,13 @@
             const [selectedDate, setSelectedDate] = useState(null);
             const [availableTimes, setAvailableTimes] = useState([]);
             const [userZipCode, setUserZipCode] = useState('');
+            const [showAllBrands, setShowAllBrands] = useState(false);
 
             const questions = [
                 {
                     type: 'intro',
                     section: "Professional Vision Assessment",
-                    title: "VisionMatch by OptiQa",
+                    title: "Your perfect eyewear setup",
                     subtitle: "A comprehensive vision assessment to determine your optimal eyewear solution based on your lifestyle and visual needs.",
                     note: "Professional optical analysis • Takes 2-3 minutes • Personalized recommendations"
                 },
@@ -129,25 +131,38 @@
                     type: 'single',
                     section: "Your Current Setup",
                     question: "How many pairs of glasses do you regularly use?",
-                    options: ["Just one", "Two", "More than two", "None"]
+                    options: ["Just one", "Two", "More than two"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'multiple',
                     section: "Your Current Setup",
                     question: "What do you mostly use your glasses for?",
-                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion"]
+                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion"],
+                    conditional: (answers) => answers[1] && answers[1].includes('Yes')
                 },
                 {
                     type: 'single',
                     section: "Your Current Setup",
                     question: "Are you happy with your current setup?",
-                    options: ["Not at all 😕", "Could be better 😐", "Pretty happy 🙂", "Love it 😍"]
+                    options: ["Not at all 😕", "Could be better 😐", "Pretty happy 🙂", "Love it 😍"],
+                    conditional: (answers) => answers[1] && answers[1].includes('Yes')
                 },
                 {
-                    type: 'multiple',
+                    type: 'brand-selector',
                     section: "Your Current Setup",
-                    question: "Do you prefer specific brands or styles?",
-                    options: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "I go for comfort over brands", "Not sure / no preference"]
+                    question: "Which brands do you like?",
+                    popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
+                    allBrands: {
+                        "Luxury & Designer": ["Tom Ford", "Oliver Peoples", "Cartier", "Chanel", "Dior", "Prada", "Gucci", "Saint Laurent", "Bottega Veneta", "Fendi", "Versace", "Emporio Armani"],
+                        "Sport & Active": ["Oakley", "Nike", "Adidas", "Under Armour", "Revo", "Maui Jim", "Smith", "Julbo", "Bollé", "Uvex", "Carrera", "Police"],
+                        "European Heritage": ["Ray-Ban", "Persol", "Lindberg", "Silhouette", "Anglo American", "Cazal", "Moscot", "Rodenstock", "Menrad", "Eschenbach"],
+                        "Boutique": ["Ace & Tate", "Cubitts", "Mykita", "ic! berlin", "Etnia Barcelona", "Modo", "Garrett Leight", "Kirk & Kirk", "Theo", "L.A. Eyeworks", "Dita"],
+                        "Spanish Chains & Online": ["Alain Afflelou", "Multiópticas", "General Óptica", "Óptica 2000", "Cottet", "Óptica Universitaria", "Visionlab", "Mister Spex España"],
+                        "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
+                    },
+                    genericOptions: ["I go for comfort over brands", "I prefer local/independent opticians", "Not sure / no preference"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'single',
@@ -159,7 +174,8 @@
                     type: 'single',
                     section: "Lens Comfort & Eye Experience",
                     question: "Have your lenses been updated in the past 2 years?",
-                    options: ["Yes", "No", "Not sure"]
+                    options: ["Yes", "No", "Not sure"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'multiple',
@@ -171,7 +187,8 @@
                     type: 'single',
                     section: "Lens Comfort & Eye Experience",
                     question: "What type of lenses do you have today?",
-                    options: ["Single vision", "Progressive (multifocal)", "Not sure"]
+                    options: ["Single vision", "Progressive (multifocal)", "Not sure"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'single',
@@ -183,7 +200,12 @@
                     type: 'single',
                     section: "Lifestyle & Vision Needs",
                     question: "Do you have issues with your current glasses while driving?",
-                    options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"]
+                    options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"],
+                    conditional: (answers) => {
+                        const wearsGlasses = answers[1] && answers[1].includes('Yes');
+                        const useForDriving = answers[3] && answers[3].includes('Driving');
+                        return wearsGlasses && useForDriving;
+                    }
                 },
                 {
                     type: 'multiple',
@@ -195,13 +217,24 @@
                     type: 'single',
                     section: "Lifestyle & Vision Needs",
                     question: "Do you ever avoid wearing glasses because they get in the way of your activities?",
-                    options: ["Yes", "Sometimes", "No"]
+                    options: ["Yes", "Sometimes", "No"],
+                    conditional: (answers) => {
+                        const wearsGlasses = answers[1] && answers[1].includes('Yes');
+                        const uses = answers[3] || [];
+                        const freeTime = answers[12] || [];
+                        const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
+                        return wearsGlasses && doesSports;
+                    }
                 },
                 {
                     type: 'text',
                     section: "Lifestyle & Vision Needs",
                     question: "Tell us about your specific activities and hobbies",
-                    placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc."
+                    placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
+                    conditional: (answers) => {
+                        const freeTime = answers[12] || [];
+                        return freeTime.length > 0 && !freeTime.includes("None of these");
+                    }
                 },
                 {
                     type: 'single',
@@ -248,7 +281,7 @@
                     if (printWindow) {
                         printWindow.document.write(`
                             <html>
-                                <head><title>Your Vision Plan - OptiQa</title></head>
+                                <head><title>Your Vision Plan</title></head>
                                 <body>${content}</body>
                             </html>
                         `);
@@ -711,7 +744,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 const answer = answers[currentStep];
                 const question = questions[currentStep];
                 
-                if (question?.type === 'multiple') {
+                if (question?.type === 'multiple' || question?.type === 'brand-selector') {
                     return Array.isArray(answer) && answer.length > 0;
                 }
                 
@@ -727,7 +760,9 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             };
 
             const getProgress = () => {
-                return (currentStep / questions.length) * 100;
+                const totalEffective = questions.filter((q, index) => index > 0 && (!q.conditional || q.conditional(answers) || answers[index] !== undefined)).length;
+                const completedSteps = Object.keys(answers).filter(key => parseInt(key) > 0 && parseInt(key) <= currentStep).length;
+                return (completedSteps / totalEffective) * 100;
             };
 
             const getSectionProgress = () => {
@@ -818,23 +853,24 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             };
 
             const nextStep = async () => {
-                const newStep = currentStep + 1;
-                
+                setShowAllBrands(false); // Reset brand expansion when moving to next question
+                let newStep = currentStep + 1;
+                while (newStep < questions.length && questions[newStep].conditional && !questions[newStep].conditional(answers)) {
+                    updateAnswer(newStep, 'skipped'); // Log skipped for AI if needed
+                    newStep++;
+                }
                 if (newStep > 1 && newStep < questions.length && checkSectionCompletion(newStep)) {
                     const completedSection = questions[currentStep].section;
                     const sectionData = getSectionInsights(completedSection, answers);
-                    
                     setCompletedSectionData(sectionData);
                     setShowSectionComplete(true);
-                    
                     setTimeout(() => {
                         setShowSectionComplete(false);
                         setCurrentStep(newStep);
                     }, 1500);
                     return;
                 }
-                
-                if (currentStep === questions.length - 1) {
+                if (newStep === questions.length) {
                     setCurrentStep(newStep);
                     setTimeout(() => {
                         generateAIInsights();
@@ -845,7 +881,11 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             };
 
             const prevStep = () => {
-                setCurrentStep(prev => prev - 1);
+                let newStep = currentStep - 1;
+                while (newStep > 0 && questions[newStep].conditional && !questions[newStep].conditional(answers)) {
+                    newStep--;
+                }
+                setCurrentStep(newStep);
             };
 
             const renderSectionComplete = () => {
@@ -968,6 +1008,95 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                 )
                             )
                         ) :
+                    q.type === 'brand-selector' ?
+                        (() => {
+                            const selectedBrands = answers[currentStep] || [];
+                            
+                            const toggleBrand = (brand) => {
+                                const updated = selectedBrands.includes(brand)
+                                    ? selectedBrands.filter(item => item !== brand)
+                                    : [...selectedBrands, brand];
+                                updateAnswer(currentStep, updated);
+                            };
+                            
+                            return React.createElement('div', { className: "space-y-6" },
+                                // Popular brands section
+                                React.createElement('div', null,
+                                    React.createElement('h4', { className: "text-lg font-semibold text-optiqa-navy mb-4" }, "Popular Brands"),
+                                    React.createElement('div', { className: "grid grid-cols-2 gap-3" },
+                                        q.popularBrands.map((brand, index) =>
+                                            React.createElement('button', {
+                                                key: index,
+                                                onClick: () => toggleBrand(brand),
+                                                className: `p-4 text-center rounded-xl border-2 transition-all duration-200 hover:border-optiqa-blue hover:bg-blue-50 hover:shadow-md ${
+                                                    selectedBrands.includes(brand)
+                                                        ? 'border-optiqa-blue bg-blue-50 text-optiqa-navy shadow-md'
+                                                        : 'border-gray-200 bg-white'
+                                                }`
+                                            }, brand)
+                                        )
+                                    )
+                                ),
+                                
+                                // More brands toggle
+                                React.createElement('div', { className: "text-center" },
+                                    React.createElement('button', {
+                                        onClick: () => setShowAllBrands(!showAllBrands),
+                                        className: "inline-flex items-center space-x-2 px-6 py-3 text-optiqa-blue hover:text-optiqa-navy border border-optiqa-blue rounded-xl hover:bg-blue-50 transition-all font-medium"
+                                    },
+                                        React.createElement('span', null, showAllBrands ? 'Show Less' : 'More Brands...'),
+                                        React.createElement('svg', { 
+                                            className: `w-4 h-4 transform transition-transform ${showAllBrands ? 'rotate-180' : ''}`,
+                                            fill: 'none',
+                                            stroke: 'currentColor',
+                                            viewBox: '0 0 24 24'
+                                        },
+                                            React.createElement('path', { strokeLinecap: 'round', strokeLinejoin: 'round', strokeWidth: 2, d: 'M19 9l-7 7-7-7' })
+                                        )
+                                    )
+                                ),
+                                
+                                // All brands by category (expandable)
+                                showAllBrands && React.createElement('div', { className: "space-y-4" },
+                                    Object.entries(q.allBrands).map(([category, brands]) =>
+                                        React.createElement('div', { key: category },
+                                            React.createElement('h5', { className: "text-md font-medium text-gray-700 mb-2" }, category),
+                                            React.createElement('div', { className: "grid grid-cols-3 gap-2" },
+                                                brands.map((brand, index) =>
+                                                    React.createElement('button', {
+                                                        key: index,
+                                                        onClick: () => toggleBrand(brand),
+                                                        className: `p-2 text-sm text-center rounded-lg border transition-all duration-200 hover:border-optiqa-blue hover:bg-blue-50 ${
+                                                            selectedBrands.includes(brand)
+                                                                ? 'border-optiqa-blue bg-blue-50 text-optiqa-navy'
+                                                                : 'border-gray-200 bg-white text-gray-700'
+                                                        }`
+                                                    }, brand)
+                                                )
+                                            )
+                                        )
+                                    )
+                                ),
+                                
+                                // Generic options
+                                React.createElement('div', null,
+                                    React.createElement('h4', { className: "text-lg font-semibold text-optiqa-navy mb-4" }, "Or..."),
+                                    React.createElement('div', { className: "space-y-2" },
+                                        q.genericOptions.map((option, index) =>
+                                            React.createElement('button', {
+                                                key: index,
+                                                onClick: () => toggleBrand(option),
+                                                className: `w-full p-4 text-left rounded-xl border-2 transition-all duration-200 hover:border-optiqa-blue hover:bg-blue-50 hover:shadow-md ${
+                                                    selectedBrands.includes(option)
+                                                        ? 'border-optiqa-blue bg-blue-50 text-optiqa-navy shadow-md'
+                                                        : 'border-gray-200 bg-white'
+                                                }`
+                                            }, option)
+                                        )
+                                    )
+                                )
+                            );
+                        })() :
                         React.createElement('div', { className: "space-y-3" },
                             q.options.map((option, index) =>
                                 React.createElement('button', {
@@ -1132,7 +1261,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 // OptiQa Header
                 React.createElement('div', { className: "text-center mb-8" },
                     React.createElement('div', { className: "max-w-2xl mx-auto px-4" },
-                        React.createElement('h1', { className: "text-3xl font-bold optiqa-brand mb-2" }, "OptiQa"),
+                        React.createElement('h1', { className: "text-3xl font-bold optiqa-brand mb-2" }, "VisionMatch"),
                         React.createElement('p', { className: "text-optiqa-gray text-sm" }, "Professional Vision Assessment")
                     )
                 ),
@@ -1161,16 +1290,16 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             className: `text-xs text-center font-medium ${section.isActive ? 'text-blue-600' : section.isComplete ? 'text-green-600' : 'text-gray-400'}` 
                                         }, `${Math.round(section.progress)}%`),
                                         React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
-                                                                                    React.createElement('div', {
-                                            className: `h-2 rounded-full transition-all duration-500 ${
-                                                section.isComplete 
-                                                    ? 'progress-bar' 
-                                                    : section.isActive 
+                                            React.createElement('div', {
+                                                className: `h-2 rounded-full transition-all duration-500 ${
+                                                    section.isComplete 
                                                         ? 'progress-bar' 
-                                                        : 'bg-gray-300'
-                                            }`,
-                                            style: { width: `${section.progress}%` }
-                                        })
+                                                        : section.isActive 
+                                                            ? 'progress-bar' 
+                                                            : 'bg-gray-300'
+                                                }`,
+                                                style: { width: `${section.progress}%` }
+                                            })
                                         )
                                     )
                                 )
@@ -1193,13 +1322,13 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     !showSectionComplete && React.createElement('div', { className: "flex justify-between items-center" },
                         currentStep === 0 ? 
                             React.createElement('div', { className: "w-full flex justify-center" },
-                                                            React.createElement('button', {
-                                onClick: nextStep,
-                                className: "optiqa-button flex items-center space-x-3 px-10 py-5 text-lg font-semibold"
-                            },
-                                React.createElement('span', null, "Begin Assessment"),
-                                React.createElement(ChevronRight, { className: "w-5 h-5" })
-                            )
+                                React.createElement('button', {
+                                    onClick: nextStep,
+                                    className: "optiqa-button flex items-center space-x-3 px-10 py-5 text-lg font-semibold"
+                                },
+                                    React.createElement('span', null, "Begin Assessment"),
+                                    React.createElement(ChevronRight, { className: "w-5 h-5" })
+                                )
                             ) :
                             React.createElement(React.Fragment, null,
                                 React.createElement('button', {
@@ -1304,4 +1433,4 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
         ReactDOM.render(React.createElement(GlassesFinderWizard), document.getElementById('root'));
     </script>
 </body>
-</html> 
+</html>
