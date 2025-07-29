@@ -1133,8 +1133,13 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     return;
                 }
                 
-                // Only show section completion for intermediate sections (not the final one)
-                if (newStep > 1 && checkSectionCompletion(newStep)) {
+                // Only show section completion for intermediate sections (not the final one or intro transition)
+                const currentQuestion = questions[currentStep];
+                const nextQuestion = questions[newStep];
+                const isChangingSection = currentQuestion && nextQuestion && currentQuestion.section !== nextQuestion.section;
+                const isNotIntroTransition = currentQuestion && currentQuestion.type !== 'intro';
+                
+                if (newStep > 1 && isChangingSection && isNotIntroTransition) {
                     const completedSection = questions[currentStep].section;
                     const sectionData = getSectionInsights(completedSection, answers);
                     setCompletedSectionData(sectionData);
