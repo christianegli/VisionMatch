@@ -1139,13 +1139,26 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 const isChangingSection = currentQuestion && nextQuestion && currentQuestion.section !== nextQuestion.section;
                 const isNotIntroTransition = currentQuestion && currentQuestion.type !== 'intro';
                 
+                // Only show section completion when moving from one content section to another
+                // AND when we've actually completed meaningful questions in the current section
                 if (newStep > 1 && isChangingSection && isNotIntroTransition) {
-                    const completedSection = questions[currentStep].section;
-                    const sectionData = getSectionInsights(completedSection, answers);
-                    setCompletedSectionData(sectionData);
-                    setShowSectionComplete(true);
-                    // Wait for user to click continue - no automatic timeout
-                    return;
+                    // Check if we've answered at least one question in the current section
+                    let hasAnsweredInSection = false;
+                    for (let i = 0; i <= currentStep; i++) {
+                        if (questions[i].section === currentQuestion.section && answers[i] !== undefined) {
+                            hasAnsweredInSection = true;
+                            break;
+                        }
+                    }
+                    
+                    if (hasAnsweredInSection) {
+                        const completedSection = questions[currentStep].section;
+                        const sectionData = getSectionInsights(completedSection, answers);
+                        setCompletedSectionData(sectionData);
+                        setShowSectionComplete(true);
+                        // Wait for user to click continue - no automatic timeout
+                        return;
+                    }
                 }
                 
                 // Continue to next question
@@ -1381,10 +1394,12 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             updateAnswer(currentStep, updated);
                                         } else {
                                             updateAnswer(currentStep, option);
-                                            // Auto-advance for single choice questions
-                                            setTimeout(() => {
-                                                nextStep();
-                                            }, 200); // Small delay for visual feedback
+                                            // Auto-advance for single choice questions (except first question to avoid section completion issues)
+                                            if (currentStep > 1) {
+                                                setTimeout(() => {
+                                                    nextStep();
+                                                }, 200); // Small delay for visual feedback
+                                            }
                                         }
                                     },
                                     className: `w-full p-5 text-left rounded-xl border-2 transition-all duration-200 hover:border-optiqa-blue hover:bg-blue-50 hover:shadow-md ${
