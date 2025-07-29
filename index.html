@@ -835,19 +835,49 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             
 
                             
+                            // New user insights
                             if (!wearsGlasses || (!wearsGlasses.includes('glasses') && !wearsGlasses.includes('both'))) {
-                                return "💡 Most people wait too long to get their first glasses - early intervention prevents eye strain!";
+                                const contactsOnly = wearsGlasses && wearsGlasses.includes('contacts');
+                                if (contactsOnly) {
+                                    return "👁️ Contacts-only users often discover glasses as their secret weapon for eye comfort and style versatility!";
+                                }
+                                return "🌟 Perfect timing! Many people avoid glasses until problems develop - you're being proactive about your vision health.";
                             }
-                            if (glassesCount === "Just one" && Array.isArray(glassesUse) && glassesUse.length >= 3) {
-                                return "💡 Using one pair for multiple activities is common, but task-specific glasses can dramatically improve comfort and performance!";
+
+                            // Experienced user insights with more variety
+                            const veryHappy = satisfaction && satisfaction.includes("Very happy");
+                            const notHappy = satisfaction && satisfaction.includes("Not at all");
+                            const multipleUses = Array.isArray(glassesUse) && glassesUse.length >= 3;
+                            const screenWork = Array.isArray(glassesUse) && glassesUse.includes("Screen/office work");
+                            const driving = Array.isArray(glassesUse) && glassesUse.includes("Driving");
+                            const reading = Array.isArray(glassesUse) && glassesUse.includes("Reading");
+                            const sports = Array.isArray(glassesUse) && glassesUse.includes("Sports or outdoors");
+
+                            if (notHappy && glassesCount === "Just one") {
+                                return "🎯 Your frustration makes perfect sense - one pair trying to handle everything rarely works perfectly for any task!";
                             }
-                            if (satisfaction && satisfaction.includes("Not at all")) {
-                                return "✨ Your dissatisfaction is fixable! Most glasses problems can be solved with proper fitting and lens selection.";
+                            
+                            if (veryHappy && glassesCount === "Just one") {
+                                return "👏 Amazing that one pair works so well for you! Let's see if we can make your vision experience even better.";
                             }
-                            if (Array.isArray(glassesUse) && glassesUse.includes("Screen/office work") && glassesUse.includes("Driving")) {
-                                return "🖥️ Screen work and driving have different visual demands - specialized glasses for each can reduce eye fatigue significantly.";
+
+                            if (glassesCount === "More than two" && veryHappy) {
+                                return "🏆 You've discovered the vision optimization secret - multiple specialized pairs for peak performance!";
                             }
-                            return "👓 Most successful glasses wearers have 2-3 specialized pairs rather than one 'do-everything' pair.";
+
+                            if (screenWork && driving && reading) {
+                                return "📊 Screen + driving + reading? Your eyes work harder than most - specialized lenses for each activity can be life-changing!";
+                            }
+                            
+                            if (sports && screenWork) {
+                                return "⚡ Digital work AND active lifestyle? You need glasses that can keep up with your dynamic routine!";
+                            }
+
+                            if (multipleUses && glassesCount === "Just one") {
+                                return "🔄 Your diverse activities deserve diverse optical solutions - it's like having one tool for every job!";
+                            }
+
+                            return "💎 Every vision setup is unique - let's optimize yours for maximum comfort and performance!";
                             
                         case "Lens Comfort & Eye Experience":
                             const screenTime = findAnswerByQuestion('How many hours per day are you in front of a screen?');
@@ -857,22 +887,59 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             
 
                             
-                            if (screenTime === "More than 8 hours" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
-                                return "💻 Heavy screen users like you are among the 32% who experience eye strain - specialized computer glasses can help!";
+                            // Enhanced symptom analysis
+                            const hasEyeStrain = Array.isArray(symptoms) && symptoms.includes("Eye strain at screen");
+                            const hasHeadaches = Array.isArray(symptoms) && symptoms.includes("Headaches");
+                            const hasTiredEyes = Array.isArray(symptoms) && symptoms.includes("Tired eyes");
+                            const hasDryEyes = Array.isArray(symptoms) && symptoms.includes("Dry eyes");
+                            const hasBlurryVision = Array.isArray(symptoms) && symptoms.includes("Blurry vision");
+                            const noSymptoms = Array.isArray(symptoms) && symptoms.includes("None of these");
+                            const symptomCount = Array.isArray(symptoms) ? symptoms.filter(s => s !== "None of these").length : 0;
+
+                            // Heavy screen users with multiple symptoms
+                            if (screenTime === "More than 8 hours" && symptomCount >= 3) {
+                                return "🚨 Multiple symptoms + 8+ hours screens = your eyes are working overtime! Blue light filtering and proper breaks can transform your day.";
                             }
-                            if (Array.isArray(symptoms) && symptoms.includes("Headaches") && symptoms.includes("Tired eyes")) {
-                                return "🧠 Headaches affect 27% of screen users while tired eyes are very common - often fixable with proper correction!";
+
+                            // Progressive lens computer struggles
+                            if (lensType === "Progressive (multifocal)" && hasEyeStrain && screenTime !== "Less than 2 hours") {
+                                return "🖥️ Progressive lenses + computer work = neck strain and eye fatigue. Dedicated computer glasses are a game-changer!";
                             }
-                            if (lensType === "Progressive (multifocal)" && Array.isArray(symptoms) && symptoms.includes("Eye strain at screen")) {
-                                return "📖 Progressive lens users often need separate computer glasses - the intermediate zone isn't optimal for screens.";
+
+                            // Outdated prescription red flags
+                            if (lensUpdated === "No" && (hasBlurryVision || hasHeadaches)) {
+                                return "📅 Blurry vision or headaches with an old prescription? Your eyes are literally asking for an update!";
                             }
-                            if (lensUpdated === "No" && Array.isArray(symptoms) && symptoms.length >= 2) {
-                                return "🔄 Outdated prescriptions often cause multiple symptoms like yours - regular updates are essential!";
+
+                            // Classic digital eye strain combo
+                            if (hasEyeStrain && hasTiredEyes && screenTime !== "Less than 2 hours") {
+                                return "💻 Eye strain + tired eyes = textbook digital fatigue. Anti-reflective coatings and blue light filters work wonders!";
                             }
-                            if (Array.isArray(symptoms) && symptoms.includes("None of these")) {
-                                return "🌟 No vision symptoms is great! You're among the fortunate few with comfortable screen use.";
+
+                            // Dry eyes insight
+                            if (hasDryEyes && screenTime === "More than 8 hours") {
+                                return "💧 Extended screen time reduces your blink rate by 60%! Specialized lens coatings can help maintain eye moisture.";
                             }
-                            return "👁️ Digital eye strain affects about 90% of heavy screen users - specialized solutions can help significantly.";
+
+                            // Headache analysis
+                            if (hasHeadaches && !hasEyeStrain && lensType !== "I don't wear glasses") {
+                                return "🧠 Headaches without eye strain often mean your prescription needs fine-tuning - small changes, big relief!";
+                            }
+
+                            // No symptoms celebration with variety
+                            if (noSymptoms && screenTime === "More than 8 hours") {
+                                return "🎉 No eye symptoms despite heavy screen use? You've got excellent visual stamina - let's keep it that way!";
+                            }
+                            if (noSymptoms) {
+                                return "✨ Symptom-free vision is a gift! Our goal is to optimize what's already working well for you.";
+                            }
+
+                            // Moderate users
+                            if (screenTime === "4-6 hours" && symptomCount === 1) {
+                                return "⚖️ One symptom with moderate screen time? Catching issues early prevents them from becoming chronic problems.";
+                            }
+
+                            return "🔍 Your symptom pattern reveals exactly where we can optimize your visual comfort - precision solutions ahead!";
                             
                         case "Lifestyle & Vision Needs":
                             const freeTime = findAnswerByQuestion('What do you usually do in your free time?') || [];
@@ -882,42 +949,136 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                             
 
                             
-                            if (Array.isArray(freeTime) && freeTime.includes("Exercise or play sports") && avoidGlasses === "Yes") {
-                                return "🏃‍♂️ Sports vision is crucial for performance - about 90 million Americans participate in sports and many need proper eyewear!";
+                            // Detailed activity analysis
+                            const doesSports = Array.isArray(freeTime) && freeTime.includes("Exercise or play sports");
+                            const doesOutdoors = Array.isArray(freeTime) && freeTime.includes("Spend time outdoors");
+                            const doesReading = Array.isArray(freeTime) && freeTime.includes("Read/watch shows");
+                            const doesCreative = Array.isArray(freeTime) && freeTime.includes("Create (music, art, crafts)");
+                            const doesTravel = Array.isArray(freeTime) && freeTime.includes("Travel");
+                            const doesSocial = Array.isArray(freeTime) && freeTime.includes("Socialize with friends/family");
+                            const activityCount = Array.isArray(freeTime) ? freeTime.length : 0;
+
+                            // Sports + avoids glasses = major insight
+                            if (doesSports && avoidGlasses === "Yes") {
+                                return "⚡ Avoiding glasses during sports? You're missing out on enhanced performance, safety, and confidence - sport-specific eyewear changes everything!";
                             }
+
+                            // Night driving struggles
                             if (drivingIssues && drivingIssues.includes("Yes, but only at night")) {
-                                return "🚗 Over 90% of drivers experience road glare issues - anti-reflective coatings can significantly help with night vision!";
+                                return "🌙 Night driving troubles are incredibly common! Anti-reflective coatings reduce glare by up to 99% - like turning on high-def vision.";
                             }
-                            if (activities && activities.length > 50) {
-                                return "💡 Your diverse activities need diverse visual solutions - most people underestimate this need!";
+
+                            // All driving issues
+                            if (drivingIssues && drivingIssues.includes("Yes, all the time")) {
+                                return "🚗 Constant driving issues suggest your current glasses aren't optimized for distance vision - time for driving-specific lenses!";
                             }
-                            if (Array.isArray(freeTime) && freeTime.includes("Read/watch shows") && freeTime.includes("Create (music, art, crafts)")) {
-                                return "🎨 Creative + reading activities need different focal distances - separate glasses optimize both perfectly.";
+
+                            // Creative + reading combo
+                            if (doesCreative && doesReading) {
+                                return "🎨 Art + reading = your eyes constantly shift between detail work and relaxed viewing. Progressive lenses or task-specific pairs are perfect!";
                             }
-                            if (Array.isArray(freeTime) && freeTime.includes("Travel")) {
-                                return "✈️ Frequent travelers benefit from lightweight, durable frames with photochromic lenses for adaptability.";
+
+                            // Outdoor enthusiasts
+                            if (doesOutdoors && doesSports) {
+                                return "🏞️ Outdoor sports combo? UV protection and impact resistance aren't just nice-to-have - they're essential for your active lifestyle!";
                             }
-                            return "💡 Your lifestyle variety means you'd benefit from activity-specific glasses rather than one compromise pair.";
+
+                            // Travel insights
+                            if (doesTravel && activityCount >= 3) {
+                                return "✈️ Multi-activity traveler detected! Versatile photochromic lenses adapt to any destination - from beach to mountain to city.";
+                            }
+
+                            // Social butterflies
+                            if (doesSocial && avoidGlasses === "Yes") {
+                                return "👥 Social person who avoids glasses? The right frames actually enhance your confidence and become a style statement!";
+                            }
+
+                            // Highly active people
+                            if (activityCount >= 4) {
+                                return "🎯 Wow, you're incredibly active! Your diverse lifestyle deserves equally diverse optical solutions - each activity has unique visual demands.";
+                            }
+
+                            // Detailed activity descriptions
+                            if (activities && activities.length > 100) {
+                                return "📝 Your detailed activity description shows how much vision matters to your life - let's make sure it's optimized for everything you love!";
+                            }
+
+                            // Low-key lifestyle
+                            if (activityCount <= 2 && doesReading) {
+                                return "📚 Focused lifestyle with reading emphasis? Comfort lenses with blue light filtering and anti-fatigue features are your best friends.";
+                            }
+
+                            return "🌟 Your unique lifestyle pattern is exactly what we need to create the perfect vision solution - no generic recommendations here!";
                             
                                                 case "Sun, Style & Self-Expression":
                             const prescriptionSunglasses = findAnswerByQuestion('Do you wear sunglasses with prescription?');
                             const stylePreference = findAnswerByQuestion('What is important for you in glasses?');
+                            const brandPreference = findAnswerByQuestion('Do you prefer specific brands or styles?') || [];
                             
  
                             
-                            if (prescriptionSunglasses === "No, but I'd like to") {
-                                return "🕶️ Prescription sunglasses provide clearer, more comfortable outdoor vision than combining contacts with regular sunglasses!";
+                            // Enhanced style and sun protection analysis
+                            const wantsRxSunglasses = prescriptionSunglasses === "No, but I'd like to";
+                            const hasRxSunglasses = prescriptionSunglasses === "Yes";
+                            const noRxSunglasses = prescriptionSunglasses === "No";
+                            const styleImportant = Array.isArray(stylePreference) && stylePreference.includes("Style and looks");
+                            const comfortImportant = Array.isArray(stylePreference) && stylePreference.includes("Comfort");
+                            const durabilityImportant = Array.isArray(stylePreference) && stylePreference.includes("Durability");
+                            const priceImportant = Array.isArray(stylePreference) && stylePreference.includes("Price/value");
+                            const hasLuxuryBrands = Array.isArray(brandPreference) && (brandPreference.includes("Dita") || brandPreference.includes("Lindberg") || brandPreference.includes("Silhouette"));
+                            const hasAccessibleBrands = Array.isArray(brandPreference) && (brandPreference.includes("General Óptica") || brandPreference.includes("Multiópticas"));
+
+                            // Prescription sunglasses insights
+                            if (wantsRxSunglasses && styleImportant) {
+                                return "🕶️ Style-conscious person wanting prescription sunglasses? You're about to discover the ultimate fusion of fashion and function!";
                             }
-                            if (prescriptionSunglasses === "No") {
-                                return "☀️ Most people don't realize prescription sunglasses can be both stylish AND provide superior vision protection.";
+                            
+                            if (wantsRxSunglasses && Array.isArray(stylePreference) && stylePreference.length >= 2) {
+                                return "☀️ Multiple priorities + wanting prescription sunglasses = perfect timing! UV protection with clear vision is life-changing.";
                             }
-                            if (stylePreference < 30) {
-                                return "💰 Budget-focused buyers often get better value with 2-3 specialized pairs than one expensive 'premium' pair.";
+
+                            if (hasRxSunglasses && styleImportant) {
+                                return "👓 Already rocking prescription sunglasses with style focus? You understand that functional doesn't mean boring!";
                             }
-                            if (stylePreference > 70) {
-                                return "👑 Style-conscious users discover the right frames actually enhance facial features while improving vision.";
+
+                            if (noRxSunglasses && !styleImportant) {
+                                return "🌞 No prescription sunglasses and style isn't your focus? You're missing the functional benefits - clear vision outdoors is transformative!";
                             }
-                            return "🎭 Perfect! We now have everything needed to match your style preferences with optimal vision solutions.";
+
+                            // Style priority insights
+                            if (styleImportant && hasLuxuryBrands) {
+                                return "💎 High-end style preference detected! Luxury frames are investments in both vision quality and personal expression.";
+                            }
+
+                            if (styleImportant && comfortImportant) {
+                                return "✨ Style + comfort combo? Smart approach - beautiful frames that disappear on your face are the holy grail of eyewear!";
+                            }
+
+                            // Value-focused insights
+                            if (priceImportant && hasAccessibleBrands) {
+                                return "💰 Value-focused with accessible brands? Smart strategy - quality doesn't require premium prices when you choose wisely!";
+                            }
+
+                            if (priceImportant && durabilityImportant) {
+                                return "🏗️ Price + durability focus? You understand true value - well-made frames cost less per year than cheap ones that break!";
+                            }
+
+                            // Comfort prioritizers
+                            if (comfortImportant && !styleImportant) {
+                                return "😌 Comfort above all? Lightweight materials and perfect fits transform glasses from burden to blessing - function first!";
+                            }
+
+                            // Multi-priority insights
+                            if (styleImportant && durabilityImportant && comfortImportant) {
+                                return "🎯 Style + durability + comfort? You want it all, and premium materials like titanium can deliver exactly that!";
+                            }
+
+                            // Brand-agnostic insights
+                            if (Array.isArray(brandPreference) && brandPreference.includes("No preference, I'm open to suggestions")) {
+                                return "🔍 Open to suggestions? Perfect! This lets us focus on what truly matters - the perfect fit and function for YOUR unique needs.";
+                            }
+
+                            return "🎨 Your style DNA is captured! Time to transform those preferences into the perfect eyewear that reflects your personality.";
                             
                         default:
                             return "💡 Great progress! Each answer helps us create your perfect vision solution.";
@@ -1215,6 +1376,10 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             updateAnswer(currentStep, updated);
                                         } else {
                                             updateAnswer(currentStep, option);
+                                            // Auto-advance for single choice questions
+                                            setTimeout(() => {
+                                                nextStep();
+                                            }, 200); // Small delay for visual feedback
                                         }
                                     },
                                     className: `w-full p-5 text-left rounded-xl border-2 transition-all duration-200 hover:border-optiqa-blue hover:bg-blue-50 hover:shadow-md ${
