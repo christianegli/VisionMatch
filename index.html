@@ -168,14 +168,9 @@
                         "Spanish Chains & Online": ["Alain Afflelou", "Multiópticas", "General Óptica", "Óptica 2000", "Cottet", "Óptica Universitaria", "Visionlab", "Mister Spex España"],
                         "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
                     },
-                    genericOptions: ["I go for comfort over brands", "I prefer local/independent opticians", "Not sure / no preference"],
-                    conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
-                },
-                {
-                    type: 'text',
-                    section: "Your Current Setup",
-                    question: "Any specific brands you'd like to mention?",
-                    placeholder: "Tell us about your brand preferences...",
+                    genericOptions: ["I prefer local/independent opticians"],
+                    hasTextField: true,
+                    textFieldPlaceholder: "Any specific brands you'd like to mention?",
                     conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
                 },
                 {
@@ -789,10 +784,11 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Your Current Setup", start: 1, end: 5 },
-                    { name: "Lens Comfort & Eye Experience", start: 6, end: 10 },
-                    { name: "Lifestyle & Vision Needs", start: 11, end: 14 },
-                    { name: "Sun, Style & Self-Expression", start: 15, end: 16 }
+                    { name: "Your Current Setup", start: 1, end: 6 },
+                    { name: "Lens Comfort & Eye Experience", start: 7, end: 11 },
+                    { name: "Lifestyle & Vision Needs", start: 12, end: 15 },
+                    { name: "Sun, Style & Self-Expression", start: 16, end: 17 },
+                    { name: "Final Assessment", start: 18, end: 19 }
                 ];
 
                 return sections.map((section) => {
@@ -1400,6 +1396,18 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             }, option)
                                         )
                                     )
+                                ),
+                                
+                                // Text field for additional brands
+                                q.hasTextField && React.createElement('div', { className: "mt-6" },
+                                    React.createElement('h4', { className: "text-lg font-semibold text-optiqa-navy mb-4" }, "Additional Brands"),
+                                    React.createElement('textarea', {
+                                        value: answers[`${currentStep}_text`] || '',
+                                        onChange: (e) => updateAnswer(`${currentStep}_text`, e.target.value),
+                                        placeholder: q.textFieldPlaceholder,
+                                        className: "w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none",
+                                        rows: 3
+                                    })
                                 )
                             );
                         })() :
