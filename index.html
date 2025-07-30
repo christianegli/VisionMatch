@@ -174,17 +174,53 @@
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const uses = answers[7] || [];
-                        const freeTime = answers[8] || [];
+                        const uses = answers[6] || [];
+                        const freeTime = answers[7] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
                     }
                 },
                 {
+                    type: 'text',
+                    section: "What You Need",
+                    question: "Tell us about your specific activities and hobbies",
+                    placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
+                    conditional: (answers) => {
+                        const freeTime = answers[7] || [];
+                        return freeTime.length > 0 && !freeTime.includes("None of these");
+                    }
+                },
+                {
+                    type: 'single',
+                    section: "What You Need",
+                    question: "How many hours per day are you in front of a screen?",
+                    options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
+                },
+                {
+                    type: 'multiple',
+                    section: "What You Need",
+                    question: "Do you ever experience any of the following?",
+                    options: ["Headaches related to eyesight", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "Dry eyes", "None of these"]
+                },
+                {
+                    type: 'slider',
+                    section: "What You Need",
+                    question: "Are you happy with your current glasses?",
+                    sliderLabels: ["Not happy at all", "Very happy"],
+                    sliderDefault: 75
+                },
+                {
+                    type: 'slider',
+                    section: "What You Need",
+                    question: "Do you think your current setup covers all your needs?",
+                    sliderLabels: ["Not at all", "Perfectly"],
+                    sliderDefault: 75
+                },
+                {
                     type: 'slider',
                     section: "What You Need",
                     question: "What is important for you in glasses?",
-                    sliderLabels: ["Price", "Style"],
+                    sliderLabels: ["Price", "Style/Brand"],
                     sliderDefault: 50
                 },
                 {
@@ -204,46 +240,19 @@
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
                     conditional: (answers) => {
-                        const styleImportance = answers[9] || 50;
+                        const styleImportance = answers[15] || 50;
                         return styleImportance >= 50;
-                    }
-                },
-
-                {
-                    type: 'slider',
-                    section: "What You Need",
-                    question: "Do you think your current setup covers all your needs?",
-                    sliderLabels: ["Not at all", "Perfectly"],
-                    sliderDefault: 75
-                },
-                {
-                    type: 'text',
-                    section: "What You Need",
-                    question: "Tell us about your specific activities and hobbies",
-                    placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
-                    conditional: (answers) => {
-                        const freeTime = answers[8] || [];
-                        return freeTime.length > 0 && !freeTime.includes("None of these");
                     }
                 },
                 {
                     type: 'single',
                     section: "What You Need",
-                    question: "How many hours per day are you in front of a screen?",
-                    options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
-                },
-                {
-                    type: 'slider',
-                    section: "What You Need",
-                    question: "Are you happy with your current glasses?",
-                    sliderLabels: ["Not happy at all", "Very happy"],
-                    sliderDefault: 75
-                },
-                {
-                    type: 'multiple',
-                    section: "What You Need",
-                    question: "Do you ever experience any of the following?",
-                    options: ["Headaches related to eyesight", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "Dry eyes", "None of these"]
+                    question: "What did you spend on your primary glasses?",
+                    options: ["Less than 100€", "100 - 300€", "More than 300€"],
+                    conditional: (answers) => {
+                        const styleImportance = answers[15] || 50;
+                        return styleImportance < 50;
+                    }
                 },
 
             ];
@@ -765,7 +774,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const getSectionProgress = () => {
                 const sections = [
                     { name: "What You Have", start: 1, end: 6 },
-                    { name: "What You Need", start: 7, end: 14 }
+                    { name: "What You Need", start: 7, end: 16 }
                 ];
 
                 return sections.map((section) => {
