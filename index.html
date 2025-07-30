@@ -156,22 +156,11 @@
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
-                    type: 'brand-selector',
+                    type: 'slider',
                     section: "Your Current Setup",
-                    question: "Which brands do you like?",
-                    popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
-                    allBrands: {
-                        "Luxury & Designer": ["Tom Ford", "Oliver Peoples", "Cartier", "Chanel", "Dior", "Prada", "Gucci", "Saint Laurent", "Bottega Veneta", "Fendi", "Versace", "Emporio Armani"],
-                        "Sport & Active": ["Oakley", "Nike", "Adidas", "Under Armour", "Revo", "Maui Jim", "Smith", "Julbo", "Bollé", "Uvex", "Carrera", "Police"],
-                        "European Heritage": ["Ray-Ban", "Persol", "Lindberg", "Silhouette", "Anglo American", "Cazal", "Moscot", "Rodenstock", "Menrad", "Eschenbach"],
-                        "Boutique": ["Ace & Tate", "Cubitts", "Mykita", "ic! berlin", "Etnia Barcelona", "Modo", "Garrett Leight", "Kirk & Kirk", "Theo", "L.A. Eyeworks", "Dita"],
-                        "Spanish Chains & Online": ["Alain Afflelou", "Multiópticas", "General Óptica", "Óptica 2000", "Cottet", "Óptica Universitaria", "Visionlab", "Mister Spex España"],
-                        "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
-                    },
-                    genericOptions: ["I prefer local/independent opticians"],
-                    hasTextField: true,
-                    textFieldPlaceholder: "Any specific brands you'd like to mention?",
-                    conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                    question: "What is important for you in glasses?",
+                    sliderLabels: ["Price", "Style"],
+                    sliderDefault: 50
                 },
                 {
                     type: 'single',
@@ -246,11 +235,22 @@
                     options: ["Yes", "No, but I'd like to", "No"]
                 },
                 {
-                    type: 'slider',
+                    type: 'brand-selector',
                     section: "Sun, Style & Self-Expression",
-                    question: "What is important for you in glasses?",
-                    sliderLabels: ["Price", "Style"],
-                    sliderDefault: 50
+                    question: "Which brands do you like?",
+                    popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
+                    allBrands: {
+                        "Luxury & Designer": ["Tom Ford", "Oliver Peoples", "Cartier", "Chanel", "Dior", "Prada", "Gucci", "Saint Laurent", "Bottega Veneta", "Fendi", "Versace", "Emporio Armani"],
+                        "Sport & Active": ["Oakley", "Nike", "Adidas", "Under Armour", "Revo", "Maui Jim", "Smith", "Julbo", "Bollé", "Uvex", "Carrera", "Police"],
+                        "European Heritage": ["Ray-Ban", "Persol", "Lindberg", "Silhouette", "Anglo American", "Cazal", "Moscot", "Rodenstock", "Menrad", "Eschenbach"],
+                        "Boutique": ["Ace & Tate", "Cubitts", "Mykita", "ic! berlin", "Etnia Barcelona", "Modo", "Garrett Leight", "Kirk & Kirk", "Theo", "L.A. Eyeworks", "Dita"],
+                        "Spanish Chains & Online": ["Alain Afflelou", "Multiópticas", "General Óptica", "Óptica 2000", "Cottet", "Óptica Universitaria", "Visionlab", "Mister Spex España"],
+                        "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
+                    },
+                    genericOptions: ["I prefer local/independent opticians"],
+                    hasTextField: true,
+                    textFieldPlaceholder: "Any specific brands you'd like to mention?",
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
                 },
                 {
                     type: 'single',
