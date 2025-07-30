@@ -239,7 +239,7 @@
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
                     conditional: (answers) => {
-                        const styleImportance = answers[15] || 50;
+                        const styleImportance = answers[14] || 50;
                         return styleImportance >= 50;
                     }
                 },
@@ -249,7 +249,7 @@
                     question: "What did you spend on your primary glasses?",
                     options: ["Less than 100€", "100 - 300€", "More than 300€"],
                     conditional: (answers) => {
-                        const styleImportance = answers[15] || 50;
+                        const styleImportance = answers[14] || 50;
                         return styleImportance < 50;
                     }
                 },
