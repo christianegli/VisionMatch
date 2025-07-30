@@ -131,29 +131,25 @@
                     type: 'single',
                     section: "Current Setup",
                     question: "How many pairs of glasses do you regularly use, including sunglasses?",
-                    options: ["One", "Two", "Three or more"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["One", "Two", "Three or more"]
                 },
                 {
                     type: 'multiple',
                     section: "Current Setup",
                     question: "What glasses do you own?",
-                    options: ["Single vision", "Progressive", "Single vision sunglasses", "Progressive sunglasses", "Plain sunglasses"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Single vision", "Progressive", "Single vision sunglasses", "Progressive sunglasses", "Plain sunglasses"]
                 },
                 {
                     type: 'multiple',
                     section: "Current Setup",
                     question: "What do you mostly use your glasses for?",
-                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
                 },
                 {
                     type: 'single',
                     section: "Current Setup",
                     question: "How important is the brand of your frames or lenses to you?",
-                    options: ["Very important", "Somewhat important", "Not very important", "Not important at all"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Very important", "Somewhat important", "Not very important", "Not important at all"]
                 },
                 {
                     type: 'brand-selector',
@@ -171,35 +167,31 @@
                     genericOptions: ["I prefer local/independent opticians"],
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                    conditional: (answers) => answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
                 },
                 {
                     type: 'single',
                     section: "Current Setup",
                     question: "Have your primary glasses been updated in the last 2 years?",
-                    options: ["Yes", "No", "Not sure"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Yes", "No", "Not sure"]
                 },
                 {
                     type: 'single',
                     section: "Current Setup",
                     question: "Have your sunglasses been updated in the last 2 years?",
-                    options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
                 },
                 {
                     type: 'single',
                     section: "Current Setup",
                     question: "Are you happy with your current glasses?",
-                    options: ["Very happy", "Somewhat happy", "Not very happy", "Not happy at all"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Very happy", "Somewhat happy", "Not very happy", "Not happy at all"]
                 },
                 {
                     type: 'single',
                     section: "Current Setup",
                     question: "Do you think your current setup covers all your needs?",
-                    options: ["Yes, completely", "Mostly", "Somewhat", "No, not at all"],
-                    conditional: (answers) => answers[0] && answers[0].includes('glasses')
+                    options: ["Yes, completely", "Mostly", "Somewhat", "No, not at all"]
                 },
                 {
                     type: 'slider',
