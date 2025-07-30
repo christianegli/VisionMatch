@@ -159,16 +159,17 @@
                 },
                 {
                     type: 'multiple',
-                    section: "What You Need",
-                    question: "What do you mostly use your glasses for?",
-                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
+                    section: "Current Setup",
+                    question: "What do you usually do in your free time?",
+                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
                 },
                 {
                     type: 'multiple',
                     section: "What You Need",
-                    question: "What do you usually do in your free time?",
-                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
+                    question: "What do you mostly use your glasses for?",
+                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
                 },
+
                 {
                     type: 'single',
                     section: "What You Need",
@@ -176,8 +177,8 @@
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const uses = answers[6] || [];
-                        const freeTime = answers[6] || [];
+                        const uses = answers[7] || [];
+                        const freeTime = answers[7] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
                     }
@@ -198,7 +199,7 @@
                     genericOptions: ["I prefer local/independent opticians"],
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
-                    conditional: (answers) => answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                    conditional: (answers) => answers[6] && (answers[6].includes('Very important') || answers[6].includes('Somewhat important'))
                 },
                 {
                     type: 'single',
@@ -768,8 +769,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Current Setup", start: 1, end: 6 },
-                    { name: "What You Need", start: 7, end: 18 }
+                    { name: "Current Setup", start: 1, end: 7 },
+                    { name: "What You Need", start: 8, end: 17 }
                 ];
 
                 return sections.map((section) => {
@@ -1571,25 +1572,33 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                         ),
                         
                         currentStep >= questions.length ? 
-                            React.createElement('div', { className: "grid grid-cols-4 gap-2" },
+                            React.createElement('div', { className: "space-y-4" },
                                 getSectionProgress().map((section, index) =>
-                                    React.createElement('div', { key: index, className: "space-y-1" },
-                                        React.createElement('div', { className: "text-xs text-center font-medium text-green-600" }, "100%"),
-                                        React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
-                                            React.createElement('div', { className: "progress-bar h-2 rounded-full w-full" })
+                                    React.createElement('div', { key: index, className: "space-y-2" },
+                                        React.createElement('div', { className: "flex justify-between items-center" },
+                                            React.createElement('div', { className: "text-sm font-medium text-green-600" }, section.name),
+                                            React.createElement('div', { className: "text-sm font-medium text-green-600" }, "100%")
+                                        ),
+                                        React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-3" },
+                                            React.createElement('div', { className: "progress-bar h-3 rounded-full w-full" })
                                         )
                                     )
                                 )
                             ) :
-                            React.createElement('div', { className: "grid grid-cols-4 gap-2" },
+                            React.createElement('div', { className: "space-y-4" },
                                 getSectionProgress().map((section, index) =>
-                                    React.createElement('div', { key: index, className: "space-y-1" },
-                                        React.createElement('div', { 
-                                            className: `text-xs text-center font-medium ${section.isActive ? 'text-blue-600' : section.isComplete ? 'text-green-600' : 'text-gray-400'}` 
-                                        }, `${Math.round(section.progress)}%`),
-                                        React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-2" },
+                                    React.createElement('div', { key: index, className: "space-y-2" },
+                                        React.createElement('div', { className: "flex justify-between items-center" },
+                                            React.createElement('div', { 
+                                                className: `text-sm font-medium ${section.isActive ? 'text-blue-600' : section.isComplete ? 'text-green-600' : 'text-gray-400'}` 
+                                            }, section.name),
+                                            React.createElement('div', { 
+                                                className: `text-sm font-medium ${section.isActive ? 'text-blue-600' : section.isComplete ? 'text-green-600' : 'text-gray-400'}` 
+                                            }, `${Math.round(section.progress)}%`)
+                                        ),
+                                        React.createElement('div', { className: "w-full bg-gray-200 rounded-full h-3" },
                                             React.createElement('div', {
-                                                className: `h-2 rounded-full transition-all duration-500 ${
+                                                className: `h-3 rounded-full transition-all duration-500 ${
                                                     section.isComplete 
                                                         ? 'progress-bar' 
                                                         : section.isActive 
