@@ -140,20 +140,32 @@
                     options: ["Single vision", "Progressive", "Single vision sunglasses", "Progressive sunglasses", "Plain sunglasses"]
                 },
                 {
-                    type: 'multiple',
+                    type: 'single',
                     section: "Current Setup",
+                    question: "Have your primary glasses been updated in the last 2 years?",
+                    options: ["Yes", "No", "Not sure"]
+                },
+                {
+                    type: 'single',
+                    section: "Current Setup",
+                    question: "Have your sunglasses been updated in the last 2 years?",
+                    options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
+                },
+                {
+                    type: 'multiple',
+                    section: "What You Need",
                     question: "What do you mostly use your glasses for?",
                     options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
+                    section: "What You Need",
                     question: "How important is the brand of your frames or lenses to you?",
                     options: ["Very important", "Somewhat important", "Not very important", "Not important at all"]
                 },
                 {
                     type: 'brand-selector',
-                    section: "Current Setup",
+                    section: "What You Need",
                     question: "Which brands do you like?",
                     popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
                     allBrands: {
@@ -167,29 +179,17 @@
                     genericOptions: ["I prefer local/independent opticians"],
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
-                    conditional: (answers) => answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                    conditional: (answers) => answers[7] && (answers[7].includes('Very important') || answers[7].includes('Somewhat important'))
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
-                    question: "Have your primary glasses been updated in the last 2 years?",
-                    options: ["Yes", "No", "Not sure"]
-                },
-                {
-                    type: 'single',
-                    section: "Current Setup",
-                    question: "Have your sunglasses been updated in the last 2 years?",
-                    options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
-                },
-                {
-                    type: 'single',
-                    section: "Current Setup",
+                    section: "What You Need",
                     question: "Are you happy with your current glasses?",
                     options: ["Very happy", "Somewhat happy", "Not very happy", "Not happy at all"]
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
+                    section: "What You Need",
                     question: "Do you think your current setup covers all your needs?",
                     options: ["Yes, completely", "Mostly", "Somewhat", "No, not at all"]
                 },
@@ -219,7 +219,7 @@
                     options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const useForDriving = answers[3] && answers[3].includes('Driving');
+                        const useForDriving = answers[5] && answers[5].includes('Driving');
                         return wearsGlasses && useForDriving;
                     }
                 },
@@ -236,7 +236,7 @@
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const uses = answers[3] || [];
+                        const uses = answers[5] || [];
                         const freeTime = answers[14] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
@@ -777,8 +777,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Current Setup", start: 1, end: 10 },
-                    { name: "What You Need", start: 11, end: 19 }
+                    { name: "Current Setup", start: 1, end: 5 },
+                    { name: "What You Need", start: 6, end: 18 }
                 ];
 
                 return sections.map((section) => {
