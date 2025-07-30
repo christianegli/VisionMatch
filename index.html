@@ -124,29 +124,36 @@
                 {
                     type: 'single',
                     section: "Your Current Setup",
-                    question: "Do you currently wear glasses or lenses?",
+                    question: "Do you currently wear prescription glasses or lenses?",
                     options: ["Yes, I wear glasses", "Yes, I wear both glasses and contact lenses", "No, but I think I need them", "No, and I don't think I need them"]
                 },
                 {
                     type: 'single',
                     section: "Your Current Setup",
-                    question: "How many pairs of glasses do you regularly use?",
-                    options: ["Just one", "Two", "More than two"],
+                    question: "How many pairs of glasses do you regularly use, including sunglasses?",
+                    options: ["One", "Two", "Three or more"],
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'multiple',
                     section: "Your Current Setup",
+                    question: "What glasses do you own?",
+                    options: ["Single vision", "Progressive", "Single vision sunglasses", "Progressive sunglasses", "Plain sunglasses"],
+                    conditional: (answers) => answers[1] && answers[1].includes('Yes')
+                },
+                {
+                    type: 'multiple',
+                    section: "Your Current Setup",
                     question: "What do you mostly use your glasses for?",
-                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion"],
+                    options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"],
                     conditional: (answers) => answers[1] && answers[1].includes('Yes')
                 },
                 {
                     type: 'single',
                     section: "Your Current Setup",
-                    question: "Are you happy with your current setup?",
-                    options: ["Not at all 😕", "Could be better 😐", "Pretty happy 🙂", "Love it 😍"],
-                    conditional: (answers) => answers[1] && answers[1].includes('Yes')
+                    question: "Are frames important to you?",
+                    options: ["Very important", "Somewhat important", "Not very important", "Not important at all"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'brand-selector',
@@ -162,33 +169,34 @@
                         "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
                     },
                     genericOptions: ["I go for comfort over brands", "I prefer local/independent opticians", "Not sure / no preference"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                },
+                {
+                    type: 'text',
+                    section: "Your Current Setup",
+                    question: "Any specific brands you'd like to mention?",
+                    placeholder: "Tell us about your brand preferences...",
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                },
+                {
+                    type: 'single',
+                    section: "Lens Comfort & Eye Experience",
+                    question: "Have your primary glasses been updated in the last 2 years?",
+                    options: ["Yes", "No", "Not sure"],
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'single',
                     section: "Lens Comfort & Eye Experience",
-                    question: "Do you think you would benefit from a new pair of glasses/lenses?",
-                    options: ["Yes, definitely", "Maybe, I'm not sure", "Probably not", "No, I'm satisfied"]
-                },
-                {
-                    type: 'single',
-                    section: "Lens Comfort & Eye Experience",
-                    question: "Have your lenses been updated in the past 2 years?",
-                    options: ["Yes", "No", "Not sure"],
+                    question: "Have your sunglasses been updated in the last 2 years?",
+                    options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"],
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'multiple',
                     section: "Lens Comfort & Eye Experience",
                     question: "Do you ever experience any of the following?",
-                    options: ["Headaches", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "None of these"]
-                },
-                {
-                    type: 'single',
-                    section: "Lens Comfort & Eye Experience",
-                    question: "What type of lenses do you have today?",
-                    options: ["Single vision", "Progressive (multifocal)", "Not sure"],
-                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
+                    options: ["Headaches related to eyesight", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "Dry eyes", "None of these"]
                 },
                 {
                     type: 'single',
@@ -203,7 +211,7 @@
                     options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[1] && answers[1].includes('Yes');
-                        const useForDriving = answers[3] && answers[3].includes('Driving');
+                        const useForDriving = answers[4] && answers[4].includes('Driving');
                         return wearsGlasses && useForDriving;
                     }
                 },
@@ -220,8 +228,8 @@
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[1] && answers[1].includes('Yes');
-                        const uses = answers[3] || [];
-                        const freeTime = answers[12] || [];
+                        const uses = answers[4] || [];
+                        const freeTime = answers[13] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
                     }
@@ -232,7 +240,7 @@
                     question: "Tell us about your specific activities and hobbies",
                     placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
                     conditional: (answers) => {
-                        const freeTime = answers[12] || [];
+                        const freeTime = answers[13] || [];
                         return freeTime.length > 0 && !freeTime.includes("None of these");
                     }
                 },
@@ -248,6 +256,20 @@
                     question: "What is important for you in glasses?",
                     sliderLabels: ["Price", "Style"],
                     sliderDefault: 50
+                },
+                {
+                    type: 'single',
+                    section: "Final Assessment",
+                    question: "Are you happy with your current glasses?",
+                    options: ["Very happy", "Somewhat happy", "Not very happy", "Not happy at all"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
+                },
+                {
+                    type: 'single',
+                    section: "Final Assessment",
+                    question: "Do you think your current setup covers all your needs?",
+                    options: ["Yes, completely", "Mostly", "Somewhat", "No, not at all"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 }
             ];
 
