@@ -152,12 +152,7 @@
                     options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
                 },
 
-                {
-                    type: 'multiple',
-                    section: "What You Have",
-                    question: "What do you usually do in your free time?",
-                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
-                },
+
                 {
                     type: 'multiple',
                     section: "What You Have",
@@ -167,6 +162,12 @@
 
 
                 {
+                    type: 'multiple',
+                    section: "What You Need",
+                    question: "What do you usually do in your free time?",
+                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
+                },
+                {
                     type: 'single',
                     section: "What You Need",
                     question: "Do you ever avoid wearing glasses because they get in the way of your activities?",
@@ -174,7 +175,7 @@
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
                         const uses = answers[7] || [];
-                        const freeTime = answers[6] || [];
+                        const freeTime = answers[8] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
                     }
@@ -221,7 +222,7 @@
                     question: "Tell us about your specific activities and hobbies",
                     placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
                     conditional: (answers) => {
-                        const freeTime = answers[6] || [];
+                        const freeTime = answers[8] || [];
                         return freeTime.length > 0 && !freeTime.includes("None of these");
                     }
                 },
@@ -763,8 +764,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "What You Have", start: 1, end: 7 },
-                    { name: "What You Need", start: 8, end: 13 }
+                    { name: "What You Have", start: 1, end: 6 },
+                    { name: "What You Need", start: 7, end: 14 }
                 ];
 
                 return sections.map((section) => {
