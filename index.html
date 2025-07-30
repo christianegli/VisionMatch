@@ -1259,14 +1259,16 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                     }
                                 })
                             ),
-                            React.createElement('div', { className: "text-center text-sm text-gray-500" },
-                                `Current preference: ${
-                                    (answers[currentStep] || q.sliderDefault) < 25 ? 'Strongly price focused' : 
-                                    (answers[currentStep] || q.sliderDefault) < 50 ? 'Somewhat price focused' :
-                                    (answers[currentStep] || q.sliderDefault) < 75 ? 'Somewhat style focused' : 
-                                    'Strongly style focused'
-                                }`
-                            )
+                            q.question === "What is important for you in glasses?"
+                                ? React.createElement('div', { className: "text-center text-sm text-gray-500" },
+                                    `Current preference: ${
+                                        (answers[currentStep] || q.sliderDefault) < 25 ? 'Strongly price focused' : 
+                                        (answers[currentStep] || q.sliderDefault) < 50 ? 'Somewhat price focused' :
+                                        (answers[currentStep] || q.sliderDefault) < 75 ? 'Somewhat style focused' : 
+                                        'Strongly style focused'
+                                    }`
+                                )
+                                : null
                         ) :
                     q.type === 'text' ?
                         React.createElement('div', { className: "space-y-4" },
