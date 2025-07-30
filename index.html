@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1086,7 +1085,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 };
 
                 const titles = {
-                    "Current Setup": "Current Setup Analysis Complete! 📊",
+                    "What You Have": "Halfway There! 🎉",
+                    "Current Setup": "Halfway There! 🎉",
                     "What You Need": "Needs Assessment Complete! 🎯",
                     "Lens Comfort & Eye Experience": "Vision Health Mapped! 👁️",
                     "Lifestyle & Vision Needs": "Lifestyle Decoded! 🎯",
@@ -1095,7 +1095,9 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
                 return {
                     title: titles[sectionName] || "Section Complete! ✅",
-                    insight: generateDynamicInsight(sectionName)
+                    insight: sectionName === "What You Have" || sectionName === "Current Setup"
+                        ? "We now know your setup. Let's identify what you're missing..."
+                        : generateDynamicInsight(sectionName)
                 };
             };
 
