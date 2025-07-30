@@ -152,34 +152,59 @@
                     options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
                 },
                 {
+                    type: 'single',
+                    section: "Current Setup",
+                    question: "How important is the brand of your frames or lenses to you?",
+                    options: ["Very important", "Somewhat important", "Not very important", "Not important at all"]
+                },
+                {
                     type: 'multiple',
                     section: "What You Need",
                     question: "What do you mostly use your glasses for?",
                     options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
                 },
                 {
-                    type: 'single',
+                    type: 'multiple',
                     section: "What You Need",
-                    question: "How important is the brand of your frames or lenses to you?",
-                    options: ["Very important", "Somewhat important", "Not very important", "Not important at all"]
+                    question: "What do you usually do in your free time?",
+                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
                 },
                 {
                     type: 'single',
                     section: "What You Need",
-                    question: "Do you have issues with your current glasses while driving?",
-                    options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"],
+                    question: "Do you ever avoid wearing glasses because they get in the way of your activities?",
+                    options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const useForDriving = answers[6] && answers[6].includes('Driving');
-                        return wearsGlasses && useForDriving;
+                        const uses = answers[6] || [];
+                        const freeTime = answers[6] || [];
+                        const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
+                        return wearsGlasses && doesSports;
                     }
                 },
                 {
-                    type: 'slider',
+                    type: 'brand-selector',
                     section: "What You Need",
-                    question: "Are you happy with your current glasses?",
-                    sliderLabels: ["Not happy at all", "Very happy"],
-                    sliderDefault: 75
+                    question: "Which brands do you like?",
+                    popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
+                    allBrands: {
+                        "Luxury & Designer": ["Tom Ford", "Oliver Peoples", "Cartier", "Chanel", "Dior", "Prada", "Gucci", "Saint Laurent", "Bottega Veneta", "Fendi", "Versace", "Emporio Armani"],
+                        "Sport & Active": ["Oakley", "Nike", "Adidas", "Under Armour", "Revo", "Maui Jim", "Smith", "Julbo", "Bollé", "Uvex", "Carrera", "Police"],
+                        "European Heritage": ["Ray-Ban", "Persol", "Lindberg", "Silhouette", "Anglo American", "Cazal", "Moscot", "Rodenstock", "Menrad", "Eschenbach"],
+                        "Boutique": ["Ace & Tate", "Cubitts", "Mykita", "ic! berlin", "Etnia Barcelona", "Modo", "Garrett Leight", "Kirk & Kirk", "Theo", "L.A. Eyeworks", "Dita"],
+                        "Spanish Chains & Online": ["Alain Afflelou", "Multiópticas", "General Óptica", "Óptica 2000", "Cottet", "Óptica Universitaria", "Visionlab", "Mister Spex España"],
+                        "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
+                    },
+                    genericOptions: ["I prefer local/independent opticians"],
+                    hasTextField: true,
+                    textFieldPlaceholder: "Any specific brands you'd like to mention?",
+                    conditional: (answers) => answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
+                },
+                {
+                    type: 'single',
+                    section: "What You Need",
+                    question: "Do you wear sunglasses with prescription?",
+                    options: ["Yes", "No, but I'd like to", "No"]
                 },
                 {
                     type: 'slider',
@@ -202,63 +227,27 @@
                     options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
                 },
                 {
-                    type: 'single',
-                    section: "What You Need",
-                    question: "Do you ever avoid wearing glasses because they get in the way of your activities?",
-                    options: ["Yes", "Sometimes", "No"],
-                    conditional: (answers) => {
-                        const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const uses = answers[6] || [];
-                        const freeTime = answers[15] || [];
-                        const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
-                        return wearsGlasses && doesSports;
-                    }
-                },
-                {
-                    type: 'multiple',
-                    section: "What You Need",
-                    question: "What do you usually do in your free time?",
-                    options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
-                },
-                {
                     type: 'text',
                     section: "What You Need",
                     question: "Tell us about your specific activities and hobbies",
                     placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
                     conditional: (answers) => {
-                        const freeTime = answers[15] || [];
+                        const freeTime = answers[7] || [];
                         return freeTime.length > 0 && !freeTime.includes("None of these");
                     }
                 },
                 {
-                    type: 'single',
+                    type: 'slider',
                     section: "What You Need",
-                    question: "Do you wear sunglasses with prescription?",
-                    options: ["Yes", "No, but I'd like to", "No"]
+                    question: "Are you happy with your current glasses?",
+                    sliderLabels: ["Not happy at all", "Very happy"],
+                    sliderDefault: 75
                 },
                 {
                     type: 'multiple',
                     section: "What You Need",
                     question: "Do you ever experience any of the following?",
                     options: ["Headaches related to eyesight", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "Dry eyes", "None of these"]
-                },
-                {
-                    type: 'brand-selector',
-                    section: "What You Need",
-                    question: "Which brands do you like?",
-                    popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
-                    allBrands: {
-                        "Luxury & Designer": ["Tom Ford", "Oliver Peoples", "Cartier", "Chanel", "Dior", "Prada", "Gucci", "Saint Laurent", "Bottega Veneta", "Fendi", "Versace", "Emporio Armani"],
-                        "Sport & Active": ["Oakley", "Nike", "Adidas", "Under Armour", "Revo", "Maui Jim", "Smith", "Julbo", "Bollé", "Uvex", "Carrera", "Police"],
-                        "European Heritage": ["Ray-Ban", "Persol", "Lindberg", "Silhouette", "Anglo American", "Cazal", "Moscot", "Rodenstock", "Menrad", "Eschenbach"],
-                        "Boutique": ["Ace & Tate", "Cubitts", "Mykita", "ic! berlin", "Etnia Barcelona", "Modo", "Garrett Leight", "Kirk & Kirk", "Theo", "L.A. Eyeworks", "Dita"],
-                        "Spanish Chains & Online": ["Alain Afflelou", "Multiópticas", "General Óptica", "Óptica 2000", "Cottet", "Óptica Universitaria", "Visionlab", "Mister Spex España"],
-                        "Lens Technology": ["Zeiss", "Essilor", "Transitions", "Crizal", "Varilux", "Blue Light Blocking", "Progressive Specialists", "Photochromic Lenses"]
-                    },
-                    genericOptions: ["I prefer local/independent opticians"],
-                    hasTextField: true,
-                    textFieldPlaceholder: "Any specific brands you'd like to mention?",
-                    conditional: (answers) => answers[7] && (answers[7].includes('Very important') || answers[7].includes('Somewhat important'))
                 },
 
             ];
@@ -779,8 +768,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Current Setup", start: 1, end: 5 },
-                    { name: "What You Need", start: 6, end: 20 }
+                    { name: "Current Setup", start: 1, end: 6 },
+                    { name: "What You Need", start: 7, end: 18 }
                 ];
 
                 return sections.map((section) => {
