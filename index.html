@@ -1424,8 +1424,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                             updateAnswer(currentStep, updated);
                                         } else {
                                             updateAnswer(currentStep, option);
-                                            // Auto-advance for single choice questions (except question 1 to avoid section completion issues)
-                                            if (currentStep !== 1) {
+                                            // Auto-advance for single choice questions (except intro question to avoid section completion issues)
+                                            if (currentStep !== 0) {
                                                 setTimeout(() => {
                                                     nextStep();
                                                 }, 200); // Small delay for visual feedback
