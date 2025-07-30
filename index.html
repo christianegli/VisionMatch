@@ -364,7 +364,7 @@ Structure your response like this:
 **Your Vision Analysis:** [1-2 sentences: their main challenges and lifestyle demands based on actual answers]
 
 **Recommended Eyewear System:** 
-Add bullet points for each frame. start with what they have, show if they need an update, upgrade or change. then add what they are missing. show 2-3 glasses in total, but recommend up to 2 extra if it makes sense. be concise and short.
+Add bullet points for each frame. start with what they have, show if they need an update, upgrade or change. then add what they are missing. show 2-3 glasses in total, but recommend up to 2 extra if it makes sense. be concise and short. make sure to tell them whi
 
 **Why This Setup:** [Explain how each recommendation solves specific problems they mentioned]
 
@@ -1223,7 +1223,11 @@ Add bullet points for each frame. start with what they have, show if they need a
                         React.createElement('div', { className: "w-24 h-24 optiqa-gradient rounded-full flex items-center justify-center mx-auto mb-8 shadow-lg" },
                             React.createElement(Glasses, { className: "w-12 h-12 text-white" })
                         ),
-                        React.createElement('h2', { className: "text-4xl font-bold text-optiqa-navy" }, q.title),
+                        React.createElement('img', { 
+                            src: "./logo.png",
+                            alt: "Vision Gap Assessment Logo",
+                            className: "w-32 h-32 mx-auto mb-8"
+                        }),
                         React.createElement('p', { className: "text-xl text-optiqa-gray max-w-lg mx-auto leading-relaxed" }, q.subtitle),
                         React.createElement('div', { className: "flex items-center justify-center space-x-4 text-sm text-optiqa-blue font-medium" },
                             q.note.split(' • ').map((item, index) => 
