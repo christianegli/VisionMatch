@@ -123,44 +123,44 @@
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "Do you currently wear prescription glasses or lenses?",
                     options: ["Yes, I wear glasses", "Yes, I wear both glasses and contact lenses", "No, but I think I need them", "No, and I don't think I need them"]
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "How many pairs of glasses do you regularly use, including sunglasses?",
                     options: ["One", "Two", "Three or more"]
                 },
                 {
                     type: 'multiple',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "What glasses do you own?",
                     options: ["Single vision", "Progressive", "Single vision sunglasses", "Progressive sunglasses", "Plain sunglasses"]
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "Have your primary glasses been updated in the last 2 years?",
                     options: ["Yes", "No", "Not sure"]
                 },
                 {
                     type: 'single',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "Have your sunglasses been updated in the last 2 years?",
                     options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
                 },
 
                 {
                     type: 'multiple',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "What do you usually do in your free time?",
                     options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
                 },
                 {
                     type: 'multiple',
-                    section: "Current Setup",
+                    section: "What You Have",
                     question: "What do you mostly use your glasses for?",
                     options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
                 },
@@ -760,7 +760,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Current Setup", start: 1, end: 7 },
+                    { name: "What You Have", start: 1, end: 7 },
                     { name: "What You Need", start: 8, end: 14 }
                 ];
 
@@ -787,7 +787,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const getSectionColor = (section) => {
                 switch (section) {
                     case "Professional Vision Assessment": return "optiqa-gradient";
-                    case "Current Setup": return "optiqa-gradient";
+                    case "What You Have": return "optiqa-gradient";
                     case "What You Need": return "optiqa-gradient";
                     default: return "optiqa-gradient";
                 }
@@ -796,7 +796,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const getSectionIcon = (section) => {
                 switch (section) {
                     case "Let's Get Started": return Sparkles;
-                    case "Current Setup": return Glasses;
+                    case "What You Have": return Glasses;
                     case "What You Need": return Eye;
                     default: return Sparkles;
                 }
@@ -1563,7 +1563,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                         ),
                         
                         currentStep >= questions.length ? 
-                            React.createElement('div', { className: "space-y-4" },
+                            React.createElement('div', { className: "grid grid-cols-2 gap-4" },
                                 getSectionProgress().map((section, index) =>
                                     React.createElement('div', { key: index, className: "space-y-2" },
                                         React.createElement('div', { className: "flex justify-between items-center" },
@@ -1576,7 +1576,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                     )
                                 )
                             ) :
-                            React.createElement('div', { className: "space-y-4" },
+                            React.createElement('div', { className: "grid grid-cols-2 gap-4" },
                                 getSectionProgress().map((section, index) =>
                                     React.createElement('div', { key: index, className: "space-y-2" },
                                         React.createElement('div', { className: "flex justify-between items-center" },
