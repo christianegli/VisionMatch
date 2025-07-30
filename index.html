@@ -216,12 +216,6 @@
                     sliderDefault: 75
                 },
                 {
-                    type: 'single',
-                    section: "What You Need",
-                    question: "How many hours per day are you in front of a screen?",
-                    options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
-                },
-                {
                     type: 'text',
                     section: "What You Need",
                     question: "Tell us about your specific activities and hobbies",
@@ -230,6 +224,12 @@
                         const freeTime = answers[6] || [];
                         return freeTime.length > 0 && !freeTime.includes("None of these");
                     }
+                },
+                {
+                    type: 'single',
+                    section: "What You Need",
+                    question: "How many hours per day are you in front of a screen?",
+                    options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
                 },
                 {
                     type: 'slider',
