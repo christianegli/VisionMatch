@@ -111,6 +111,7 @@
             const [availableTimes, setAvailableTimes] = useState([]);
             const [userZipCode, setUserZipCode] = useState('');
             const [showAllBrands, setShowAllBrands] = useState(false);
+            const [expandedTellMore, setExpandedTellMore] = useState({});
 
             const questions = [
                 {
@@ -1268,7 +1269,41 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                         'Strongly style focused'
                                     }`
                                 )
-                                : null
+                                : null,
+                            
+                            // Tell us more button for sliders
+                            React.createElement('div', { className: "mt-6 text-center" },
+                                React.createElement('button', {
+                                    onClick: () => {
+                                        setExpandedTellMore(prev => ({
+                                            ...prev,
+                                            [currentStep]: !prev[currentStep]
+                                        }));
+                                    },
+                                    className: "inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
+                                },
+                                    React.createElement('span', null, expandedTellMore[currentStep] ? "Hide additional info" : "Tell us more"),
+                                    React.createElement('svg', { 
+                                        className: `w-4 h-4 transform transition-transform ${expandedTellMore[currentStep] ? 'rotate-180' : ''}`,
+                                        fill: "none", 
+                                        stroke: "currentColor", 
+                                        viewBox: "0 0 24 24" 
+                                    },
+                                        React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" })
+                                    )
+                                ),
+                                
+                                // Additional text field for sliders
+                                expandedTellMore[currentStep] && React.createElement('div', { className: "mt-4" },
+                                    React.createElement('textarea', {
+                                        value: answers[`${currentStep}_additional`] || '',
+                                        onChange: (e) => updateAnswer(`${currentStep}_additional`, e.target.value),
+                                        placeholder: "Any additional context or details you'd like to share about this question?",
+                                        className: "w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none",
+                                        rows: 3
+                                    })
+                                )
+                            )
                         ) :
                     q.type === 'text' ?
                         React.createElement('div', { className: "space-y-4" },
@@ -1395,6 +1430,40 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                         className: "w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none",
                                         rows: 3
                                     })
+                                ),
+                                
+                                // Tell us more button for brand selector
+                                React.createElement('div', { className: "mt-6 text-center" },
+                                    React.createElement('button', {
+                                        onClick: () => {
+                                            setExpandedTellMore(prev => ({
+                                                ...prev,
+                                                [currentStep]: !prev[currentStep]
+                                            }));
+                                        },
+                                        className: "inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
+                                    },
+                                        React.createElement('span', null, expandedTellMore[currentStep] ? "Hide additional info" : "Tell us more"),
+                                        React.createElement('svg', { 
+                                            className: `w-4 h-4 transform transition-transform ${expandedTellMore[currentStep] ? 'rotate-180' : ''}`,
+                                            fill: "none", 
+                                            stroke: "currentColor", 
+                                            viewBox: "0 0 24 24" 
+                                        },
+                                            React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" })
+                                        )
+                                    ),
+                                    
+                                    // Additional text field for brand selector
+                                    expandedTellMore[currentStep] && React.createElement('div', { className: "mt-4" },
+                                        React.createElement('textarea', {
+                                            value: answers[`${currentStep}_additional`] || '',
+                                            onChange: (e) => updateAnswer(`${currentStep}_additional`, e.target.value),
+                                            placeholder: "Any additional context about your brand preferences or style choices?",
+                                            className: "w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none",
+                                            rows: 3
+                                        })
+                                    )
                                 )
                             );
                         })() :
@@ -1442,6 +1511,40 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                                 React.createElement('div', { className: "w-2 h-2 bg-white rounded-full" })
                                         )
                                     )
+                                )
+                            ),
+                            
+                            // Tell us more button
+                            React.createElement('div', { className: "mt-6" },
+                                React.createElement('button', {
+                                    onClick: () => {
+                                        setExpandedTellMore(prev => ({
+                                            ...prev,
+                                            [currentStep]: !prev[currentStep]
+                                        }));
+                                    },
+                                    className: "inline-flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-all font-medium"
+                                },
+                                    React.createElement('span', null, expandedTellMore[currentStep] ? "Hide additional info" : "Tell us more"),
+                                    React.createElement('svg', { 
+                                        className: `w-4 h-4 transform transition-transform ${expandedTellMore[currentStep] ? 'rotate-180' : ''}`,
+                                        fill: "none", 
+                                        stroke: "currentColor", 
+                                        viewBox: "0 0 24 24" 
+                                    },
+                                        React.createElement('path', { strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: 2, d: "M19 9l-7 7-7-7" })
+                                    )
+                                ),
+                                
+                                // Additional text field
+                                expandedTellMore[currentStep] && React.createElement('div', { className: "mt-4" },
+                                    React.createElement('textarea', {
+                                        value: answers[`${currentStep}_additional`] || '',
+                                        onChange: (e) => updateAnswer(`${currentStep}_additional`, e.target.value),
+                                        placeholder: "Any additional context or details you'd like to share about this question?",
+                                        className: "w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all resize-none",
+                                        rows: 3
+                                    })
                                 )
                             )
                         )
