@@ -197,12 +197,7 @@
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
 
                 },
-                {
-                    type: 'single',
-                    section: "What You Need",
-                    question: "Do you wear sunglasses with prescription?",
-                    options: ["Yes", "No, but I'd like to", "No"]
-                },
+
                 {
                     type: 'slider',
                     section: "What You Need",
@@ -766,7 +761,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const getSectionProgress = () => {
                 const sections = [
                     { name: "Current Setup", start: 1, end: 7 },
-                    { name: "What You Need", start: 8, end: 15 }
+                    { name: "What You Need", start: 8, end: 14 }
                 ];
 
                 return sections.map((section) => {
