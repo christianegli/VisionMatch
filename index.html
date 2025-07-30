@@ -151,12 +151,7 @@
                     question: "Have your sunglasses been updated in the last 2 years?",
                     options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"]
                 },
-                {
-                    type: 'single',
-                    section: "Current Setup",
-                    question: "How important is the brand of your frames or lenses to you?",
-                    options: ["Very important", "Somewhat important", "Not very important", "Not important at all"]
-                },
+
                 {
                     type: 'multiple',
                     section: "Current Setup",
@@ -177,8 +172,8 @@
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const uses = answers[7] || [];
-                        const freeTime = answers[7] || [];
+                        const uses = answers[6] || [];
+                        const freeTime = answers[6] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
                     }
@@ -199,7 +194,7 @@
                     genericOptions: ["I prefer local/independent opticians"],
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
-                    conditional: (answers) => answers[6] && (answers[6].includes('Very important') || answers[6].includes('Somewhat important'))
+
                 },
                 {
                     type: 'single',
@@ -233,7 +228,7 @@
                     question: "Tell us about your specific activities and hobbies",
                     placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
                     conditional: (answers) => {
-                        const freeTime = answers[7] || [];
+                        const freeTime = answers[6] || [];
                         return freeTime.length > 0 && !freeTime.includes("None of these");
                     }
                 },
@@ -769,8 +764,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Current Setup", start: 1, end: 7 },
-                    { name: "What You Need", start: 8, end: 17 }
+                    { name: "Current Setup", start: 1, end: 6 },
+                    { name: "What You Need", start: 7, end: 16 }
                 ];
 
                 return sections.map((section) => {
