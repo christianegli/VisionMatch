@@ -156,41 +156,55 @@
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
-                    type: 'slider',
-                    section: "Your Current Setup",
-                    question: "What is important for you in glasses?",
-                    sliderLabels: ["Price", "Style"],
-                    sliderDefault: 50
-                },
-                {
                     type: 'single',
-                    section: "Lens Comfort & Eye Experience",
+                    section: "Current Setup",
                     question: "Have your primary glasses been updated in the last 2 years?",
                     options: ["Yes", "No", "Not sure"],
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
                     type: 'single',
-                    section: "Lens Comfort & Eye Experience",
+                    section: "Current Setup",
                     question: "Have your sunglasses been updated in the last 2 years?",
                     options: ["Yes", "No", "Not sure", "I don't have prescription sunglasses"],
                     conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 },
                 {
+                    type: 'single',
+                    section: "Current Setup",
+                    question: "Are you happy with your current glasses?",
+                    options: ["Very happy", "Somewhat happy", "Not very happy", "Not happy at all"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
+                },
+                {
+                    type: 'single',
+                    section: "Current Setup",
+                    question: "Do you think your current setup covers all your needs?",
+                    options: ["Yes, completely", "Mostly", "Somewhat", "No, not at all"],
+                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
+                },
+                {
+                    type: 'slider',
+                    section: "What You Need",
+                    question: "What is important for you in glasses?",
+                    sliderLabels: ["Price", "Style"],
+                    sliderDefault: 50
+                },
+                {
                     type: 'multiple',
-                    section: "Lens Comfort & Eye Experience",
+                    section: "What You Need",
                     question: "Do you ever experience any of the following?",
                     options: ["Headaches related to eyesight", "Tired eyes", "Glare sensitivity", "Eye strain at screen", "Dry eyes", "None of these"]
                 },
                 {
                     type: 'single',
-                    section: "Lens Comfort & Eye Experience",
+                    section: "What You Need",
                     question: "How many hours per day are you in front of a screen?",
                     options: ["<2 hours", "2–4 hours", "5–8 hours", "More than 8 hours"]
                 },
                 {
                     type: 'single',
-                    section: "Lifestyle & Vision Needs",
+                    section: "What You Need",
                     question: "Do you have issues with your current glasses while driving?",
                     options: ["No", "Yes", "Yes, but only at night", "I don't drive a lot"],
                     conditional: (answers) => {
@@ -201,13 +215,13 @@
                 },
                 {
                     type: 'multiple',
-                    section: "Lifestyle & Vision Needs",
+                    section: "What You Need",
                     question: "What do you usually do in your free time?",
                     options: ["Exercise or play sports", "Read/watch shows", "Spend time outdoors", "Travel", "Create (music, art, crafts)", "None of these"]
                 },
                 {
                     type: 'single',
-                    section: "Lifestyle & Vision Needs",
+                    section: "What You Need",
                     question: "Do you ever avoid wearing glasses because they get in the way of your activities?",
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
@@ -220,7 +234,7 @@
                 },
                 {
                     type: 'text',
-                    section: "Lifestyle & Vision Needs",
+                    section: "What You Need",
                     question: "Tell us about your specific activities and hobbies",
                     placeholder: "e.g., tennis twice a week, coding 8+ hours daily, reading novels, cycling, gaming, cooking, woodworking, etc.",
                     conditional: (answers) => {
@@ -230,13 +244,13 @@
                 },
                 {
                     type: 'single',
-                    section: "Sun, Style & Self-Expression",
+                    section: "What You Need",
                     question: "Do you wear sunglasses with prescription?",
                     options: ["Yes", "No, but I'd like to", "No"]
                 },
                 {
                     type: 'brand-selector',
-                    section: "Sun, Style & Self-Expression",
+                    section: "What You Need",
                     question: "Which brands do you like?",
                     popularBrands: ["Ray-Ban", "Oakley", "Lindberg", "Tom Ford", "Oliver Peoples", "Silhouette"],
                     allBrands: {
@@ -251,20 +265,6 @@
                     hasTextField: true,
                     textFieldPlaceholder: "Any specific brands you'd like to mention?",
                     conditional: (answers) => answers[1] && answers[1].includes('glasses') && answers[5] && (answers[5].includes('Very important') || answers[5].includes('Somewhat important'))
-                },
-                {
-                    type: 'single',
-                    section: "Final Assessment",
-                    question: "Are you happy with your current glasses?",
-                    options: ["Very happy", "Somewhat happy", "Not very happy", "Not happy at all"],
-                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
-                },
-                {
-                    type: 'single',
-                    section: "Final Assessment",
-                    question: "Do you think your current setup covers all your needs?",
-                    options: ["Yes, completely", "Mostly", "Somewhat", "No, not at all"],
-                    conditional: (answers) => answers[1] && answers[1].includes('glasses')
                 }
             ];
 
@@ -784,11 +784,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Your Current Setup", start: 1, end: 6 },
-                    { name: "Lens Comfort & Eye Experience", start: 7, end: 11 },
-                    { name: "Lifestyle & Vision Needs", start: 12, end: 15 },
-                    { name: "Sun, Style & Self-Expression", start: 16, end: 17 },
-                    { name: "Final Assessment", start: 18, end: 19 }
+                    { name: "Current Setup", start: 1, end: 9 },
+                    { name: "What You Need", start: 10, end: 18 }
                 ];
 
                 return sections.map((section) => {
@@ -814,10 +811,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const getSectionColor = (section) => {
                 switch (section) {
                     case "Professional Vision Assessment": return "optiqa-gradient";
-                    case "Your Current Setup": return "optiqa-gradient";
-                    case "Lens Comfort & Eye Experience": return "optiqa-gradient";
-                    case "Lifestyle & Vision Needs": return "optiqa-gradient";
-                    case "Sun, Style & Self-Expression": return "optiqa-gradient";
+                    case "Current Setup": return "optiqa-gradient";
+                    case "What You Need": return "optiqa-gradient";
                     default: return "optiqa-gradient";
                 }
             };
@@ -825,10 +820,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
             const getSectionIcon = (section) => {
                 switch (section) {
                     case "Let's Get Started": return Sparkles;
-                    case "Your Current Setup": return Glasses;
-                    case "Lens Comfort & Eye Experience": return Eye;
-                    case "Lifestyle & Vision Needs": return Clock;
-                    case "Sun, Style & Self-Expression": return Sun;
+                    case "Current Setup": return Glasses;
+                    case "What You Need": return Eye;
                     default: return Sparkles;
                 }
             };
@@ -844,7 +837,7 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     // Dynamic insights based on user responses
                     
                     switch(section) {
-                        case "Your Current Setup":
+                        case "Current Setup":
                             // Find answers by question content instead of hardcoded indices
                             const wearsGlasses = findAnswerByQuestion('Do you currently wear glasses or lenses?');
                             const glassesCount = findAnswerByQuestion('How many pairs of glasses do you regularly use?');
@@ -1104,7 +1097,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                 };
 
                 const titles = {
-                    "Your Current Setup": "Setup Analysis Complete! 📊",
+                    "Current Setup": "Current Setup Analysis Complete! 📊",
+                    "What You Need": "Needs Assessment Complete! 🎯",
                     "Lens Comfort & Eye Experience": "Vision Health Mapped! 👁️",
                     "Lifestyle & Vision Needs": "Lifestyle Decoded! 🎯",
                     "Sun, Style & Self-Expression": "Style Profile Ready! ✨"
