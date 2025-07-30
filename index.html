@@ -207,14 +207,14 @@
                     section: "What You Need",
                     question: "Are you happy with your current glasses?",
                     sliderLabels: ["Not happy at all", "Very happy"],
-                    sliderDefault: 75
+                    sliderDefault: 50
                 },
                 {
                     type: 'slider',
                     section: "What You Need",
                     question: "Do you think your current setup covers all your needs?",
                     sliderLabels: ["Not at all", "Perfectly"],
-                    sliderDefault: 75
+                    sliderDefault: 50
                 },
                 {
                     type: 'slider',
@@ -1244,8 +1244,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                     q.type === 'slider' ? 
                         React.createElement('div', { className: "space-y-6" },
                             React.createElement('div', { className: "flex justify-between text-sm text-gray-600 px-2" },
-                                React.createElement('span', null, q.sliderLabels[0] + " focused"),
-                                React.createElement('span', null, q.sliderLabels[1] + " focused")
+                                React.createElement('span', null, q.sliderLabels[0]),
+                                React.createElement('span', null, q.sliderLabels[1])
                             ),
                             React.createElement('div', { className: "relative px-4" },
                                 React.createElement('input', {
@@ -1260,16 +1260,30 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
                                     }
                                 })
                             ),
-                            q.question === "What is important for you in glasses?"
-                                ? React.createElement('div', { className: "text-center text-sm text-gray-500" },
-                                    `Current preference: ${
+                            React.createElement('div', { className: "text-center text-sm text-gray-500" },
+                                q.question === "What is important for you in glasses?"
+                                    ? `Current preference: ${
                                         (answers[currentStep] || q.sliderDefault) < 25 ? 'Strongly price focused' : 
                                         (answers[currentStep] || q.sliderDefault) < 50 ? 'Somewhat price focused' :
                                         (answers[currentStep] || q.sliderDefault) < 75 ? 'Somewhat style focused' : 
                                         'Strongly style focused'
                                     }`
-                                )
-                                : null,
+                                    : q.question === "Are you happy with your current glasses?"
+                                        ? `Current setting: ${
+                                            (answers[currentStep] || q.sliderDefault) < 25 ? 'Very unhappy' : 
+                                            (answers[currentStep] || q.sliderDefault) < 50 ? 'Somewhat unhappy' :
+                                            (answers[currentStep] || q.sliderDefault) < 75 ? 'Somewhat happy' : 
+                                            'Very happy'
+                                        }`
+                                        : q.question === "Do you think your current setup covers all your needs?"
+                                            ? `Current setting: ${
+                                                (answers[currentStep] || q.sliderDefault) < 25 ? 'Not at all' : 
+                                                (answers[currentStep] || q.sliderDefault) < 50 ? 'Somewhat' :
+                                                (answers[currentStep] || q.sliderDefault) < 75 ? 'Mostly' : 
+                                                'Perfectly'
+                                            }`
+                                            : `Current setting: ${Math.round((answers[currentStep] || q.sliderDefault) / 10) * 10}%`
+                            ),
                             
                             // Tell us more button for sliders
                             React.createElement('div', { className: "mt-6 text-center" },
