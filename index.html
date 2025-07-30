@@ -160,10 +160,11 @@
                 },
                 {
                     type: 'multiple',
-                    section: "What You Need",
+                    section: "Current Setup",
                     question: "What do you mostly use your glasses for?",
                     options: ["Everyday wear", "Screen/office work", "Driving", "Sports or outdoors", "Reading", "Fashion", "Sunglasses"]
                 },
+
 
                 {
                     type: 'single',
@@ -172,7 +173,7 @@
                     options: ["Yes", "Sometimes", "No"],
                     conditional: (answers) => {
                         const wearsGlasses = answers[0] && answers[0].includes('glasses');
-                        const uses = answers[6] || [];
+                        const uses = answers[7] || [];
                         const freeTime = answers[6] || [];
                         const doesSports = uses.includes("Sports or outdoors") || freeTime.includes("Exercise or play sports") || freeTime.includes("Spend time outdoors");
                         return wearsGlasses && doesSports;
@@ -764,8 +765,8 @@ CRITICAL: You must provide exactly 3 glasses recommendations every time. Vary re
 
             const getSectionProgress = () => {
                 const sections = [
-                    { name: "Current Setup", start: 1, end: 6 },
-                    { name: "What You Need", start: 7, end: 16 }
+                    { name: "Current Setup", start: 1, end: 7 },
+                    { name: "What You Need", start: 8, end: 15 }
                 ];
 
                 return sections.map((section) => {
